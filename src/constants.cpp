@@ -14,6 +14,7 @@ int do_cheeryness = 1;
 int strict_compare = 0;
 int fail_on_error = 1;
 int error_happened = 0;
+double epsilon = 1e-10;
 
 void setup_constants() {
     random_init();

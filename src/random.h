@@ -3,6 +3,7 @@
 #ifndef RANDOM_H
 #define RANDOM_H
 
+#include<random>
 #include"constants.h"
 
 void random_init();

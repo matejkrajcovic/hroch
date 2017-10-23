@@ -21,7 +21,6 @@ using namespace std;
 #define UNUSED(x) (void)(x)
 #define BASES 4
 #define DATAPATH "data/"
-#define epsilon 1e-10
 
 extern int LOWER_RANGE;
 extern int UPPER_RANGE;
@@ -111,6 +110,7 @@ extern int strict_compare;
 extern char bases[BASES];
 extern int base_id[256];
 extern char base_inv[256];
+extern double epsilon;
 
 inline void mustbe(const bool& True, const string& message="") {
     if (True!=true) {

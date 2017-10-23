@@ -1,5 +1,5 @@
-#include"random.h"
 #include<random>
+#include"random.h"
 #include<unistd.h>
 
 default_random_engine generator;
