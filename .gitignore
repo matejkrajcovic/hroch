@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+*.bin
+
+# Data
+/data
+/outputs
+
+# VS Code setup
+/.vscode
