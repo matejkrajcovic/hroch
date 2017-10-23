@@ -50,7 +50,7 @@ double Model::get_random_time() {
     return time_distribution(generator);
 }
 char Model::get_mutated_base(char base, double time) {
-    return (random_double() < exp(-4.*mut_alpha*time))?base:bases[rand()%BASES];
+    return (random_double() < exp(-4.*mut_alpha*time))?base:bases[rand()%num_bases];
 }
 bool Model::get_indel_happened(double time) {
     return (random_double() > exp(-0.02*time));

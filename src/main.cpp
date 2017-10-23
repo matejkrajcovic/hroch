@@ -3,7 +3,7 @@
 void generate_history(double time, string id) {
     GHistory* history = new GHistory();
     history->generate_random(time, 100000);
-    history->save_to_files(DATAPATH "generated", id);
+    history->save_to_files(datapath + "generated", id);
     delete history;
 }
 
@@ -44,7 +44,7 @@ void test_candi() {
     ofstream file("stats/candi-stats"+prefix);
 
     for(int hid = LOWER_RANGE; hid<UPPER_RANGE; ++hid) {
-        History* h0 = new History(DATAPATH "generated", prefix+to_string(hid));
+        History* h0 = new History(datapath + "generated", prefix+to_string(hid));
         History* h1 = new History(h0);
         h1->stats["_name"] = hid;
 
@@ -74,7 +74,7 @@ void test_score() {
     ofstream file("stats/score-stats"+prefix+strictsuffix);
 
     for(int hid = LOWER_RANGE; hid<UPPER_RANGE; ++hid) {
-        History* h0 = new History(DATAPATH "generated", prefix+to_string(hid));
+        History* h0 = new History(datapath + "generated", prefix+to_string(hid));
         History* h1 = new History(h0);
         h1->stats["_name"] = hid;
 
@@ -97,7 +97,7 @@ void test_score() {
 
 void train_history(Machine* machine, string name) {
     error_happened = 0;
-    History* h0 = new History(DATAPATH "generated", name);
+    History* h0 = new History(datapath + "generated", name);
     if (error_happened) {
         cout << "Could not train with hitory " << name << endl;
         return;
@@ -167,7 +167,7 @@ void reconstruct_one(History* h0, string hid, int strategy) {
 }
 
 void reconstruct_many(string hid) {
-    History* h0 = new History(DATAPATH "generated", hid);
+    History* h0 = new History(datapath + "generated", hid);
     if (debuging) {
         for(auto ev : h0->events) ev.second->test_stats(h0, cout);
         for(auto ev : h0->events) ev.second->write_detailed(cout);

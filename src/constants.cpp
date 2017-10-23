@@ -1,11 +1,14 @@
 #include"constants.h"
 #include <iomanip>
 
+string datapath("data/");
+
 int LOWER_RANGE = 100;
 int UPPER_RANGE = 199;
 string TEST_CASE = "F4";
 
-char bases[BASES] = {'A', 'C', 'G', 'T'};
+int num_bases = 4;
+char bases[] = {'A', 'C', 'G', 'T'};
 int base_id[256];
 char base_inv[256];
 int debuging = 0;
@@ -18,9 +21,9 @@ double epsilon = 1e-10;
 
 void setup_constants() {
     random_init();
-    For(i, BASES) {
+    For(i, num_bases) {
         base_id[(int)bases[i]] = i;
-        base_inv[(int)bases[i]] = bases[BASES-1-i];
+        base_inv[(int)bases[i]] = bases[num_bases-1-i];
     }
     cout << fixed << setprecision(6);
 }

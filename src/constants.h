@@ -19,14 +19,7 @@ using namespace std;
 #define ForGAtom(atom, sequence) for(GAtom* atom = (sequence)->first; atom != nullptr; atom = atom->next)
 #define SIZE(i) int(i.size())
 #define UNUSED(x) (void)(x)
-#define BASES 4
-#define DATAPATH "data/"
 
-extern int LOWER_RANGE;
-extern int UPPER_RANGE;
-extern string TEST_CASE;
-
-extern char bases[];
 struct trint;
 class GAtom;
 class GAtomType;
@@ -100,6 +93,12 @@ int sign(T val) {
     return (T(0) < val) - (val < T(0));
 }
 
+extern string datapath;
+
+extern int LOWER_RANGE;
+extern int UPPER_RANGE;
+extern string TEST_CASE;
+
 extern int fail_on_error;
 extern int error_happened;
 extern int debuging;
@@ -107,7 +106,8 @@ extern int stats;
 extern int do_cheeryness;
 #define SPECIAL_TRAINING 47
 extern int strict_compare;
-extern char bases[BASES];
+extern int num_bases;
+extern char bases[];
 extern int base_id[256];
 extern char base_inv[256];
 extern double epsilon;

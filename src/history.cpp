@@ -60,7 +60,7 @@ History::History(string basename, string id) {
     cherry_forest = nullptr;
     if (do_cheeryness) {
         for(string species : {"unicorn"}) {
-            read_cherryness(DATAPATH "dupstemp_data-generated-" + id + "-" + species + "-dna/");
+            read_cherryness(datapath + "dupstemp_data-generated-" + id + "-" + species + "-dna/");
         }
     }
     cout << "       " << basename << " loaded" << endl;

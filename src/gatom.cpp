@@ -94,7 +94,7 @@ GAtom::GAtom(int length) {
     this->parent = nullptr;
     this->type = new GAtomType(this);
     dna = "";
-    For(i, length) dna += bases[rand()%BASES];
+    For(i, length) dna += bases[rand()%num_bases];
 }
 
 GAtom::GAtom(GAtom* parent, const string &dna) {
