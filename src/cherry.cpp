@@ -41,7 +41,7 @@ int CherryTree::parse(map<string,int>& ids, const string& word, int from, int to
             if (word[pos] == '(') depth++;
             if (word[pos] == ')') depth--;
             if ((depth == 0 && word[pos] == ',') || depth < 0) {
-                int son = parse(ids, word, from+1, pos); 
+                int son = parse(ids, word, from+1, pos);
                 edges[me].push_back(son);
                 edges[son].push_back(me);
                 from = pos;
@@ -62,7 +62,7 @@ double CherryForest::cherryness(const HAtom& a, const HAtom& b) {
         positive += double(ct.has_cherry(a,b)) * ct.probability;
         total += ct.probability;
     }
-    // if maximum probability is low, we cant trust cherryness much, 
+    // if maximum probability is low, we cant trust cherryness much,
     // therefore we add some bias to deal with it
     if (total < epsilon) total = 1;
     return min(1.0, positive / total + bias[a.atype()]);
@@ -80,11 +80,11 @@ void CherryForest::merge(const HAtom& a, const HAtom& b) {
     trees[a.atype()] = move(new_trees);
     sizes[a.atype()]--;
 }
-    
+
 void CherryForest::read_atom(History* history, int type, string filename) {
     trees[type].clear();
     sizes[type] = 0;
-    for(auto la : history->leaf_atoms) for (auto atom : la.second) 
+    for(auto la : history->leaf_atoms) for (auto atom : la.second)
         sizes[type] += (atom.atype() == type);
     if (sizes[type] < 4) return;
     if (debuging)
@@ -119,7 +119,7 @@ void CherryForest::read_atom(History* history, int type, string filename) {
     bias[type] = pow(1.-pow(best_probability,0.5),2.0);
     file.close();
 }
-    
+
 CherryForest::CherryForest() {
 
 }

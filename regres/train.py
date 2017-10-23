@@ -59,7 +59,7 @@ def predict_on(linesc, name):
     predict = model.predict_proba(X)
     samew = sum([(y[i]-predict[i][1])**2 for i in range(len(y))])
     same = sum([(y[i]==(predict[i][1]>0.5)) for i in range(len(y))])
-    print name, 1.*samew/len(y), 1.*same/len(y) 
+    print name, 1.*samew/len(y), 1.*same/len(y)
 
 predict_on(lines, orig)
 predict_on(linesc0, orig)

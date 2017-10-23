@@ -37,7 +37,7 @@ public:
     set<pii> prev_sp, post_sp;
     int prev_bpc, post_bpc, num_types;
     //map<int,int> prev_leftnum, prev_rightnum, post_lefnum, post_rightnum;
-    
+
     ScoringData(History* h, const Candidate& c, HEvent* e);
     ~ScoringData();
 };

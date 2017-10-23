@@ -8,18 +8,18 @@ GEvent::GEvent(double time_interval) {
     this->time_interval = time_interval;
 }
 
-GEventDup::GEventDup(int from, int to, int cpos, double time_interval) : 
+GEventDup::GEventDup(int from, int to, int cpos, double time_interval) :
     GEvent(time_interval) {
     this->from = from;
     this->to = to;
     this->cpos = cpos;
 }
 
-GEventDupi::GEventDupi(int from, int to, int cpos, double time_interval) : 
+GEventDupi::GEventDupi(int from, int to, int cpos, double time_interval) :
     GEventDup(from, to, cpos, time_interval) {
 }
 
-GEventDel::GEventDel(int from, int to, double time_interval) : 
+GEventDel::GEventDel(int from, int to, double time_interval) :
     GEvent(time_interval) {
     this->from = from;
     this->to = to;
@@ -34,7 +34,7 @@ GEventRoot::GEventRoot() :
 Sequence* GEventLeaf::perform(Sequence* sequence) {
     Sequence* s = new Sequence(sequence);
     s->mutate(time_interval);
-    return s;    
+    return s;
 }
 
 Sequence* GEventRoot::perform(Sequence* sequence) {
@@ -69,14 +69,14 @@ Sequence* GEventDup::iperform(Sequence* sequence, bool invert) {
             GAtom *c = b;
             b = b->next;
             c->next = a;
-            a = c; 
+            a = c;
         }
         b->invert();
         b->next = a;
         swap(cfront_atom, cback_atom);
     }
     if (cpos_atom == nullptr) {
-       cback_atom->next = s->first; 
+       cback_atom->next = s->first;
        s->first = cfront_atom;
     } else {
         cback_atom->next = cpos_atom->next;

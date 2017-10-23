@@ -31,7 +31,7 @@ GAtomType::GAtomType(GAtom* root) {
 bool GAtom::change_parent(GAtom* new_parent) {
     if (new_parent != nullptr) this->type = new_parent->type;
     if (parent == new_parent) return false;
-    if (parent != nullptr) { 
+    if (parent != nullptr) {
         auto it = remove(parent->children.begin(), parent->children.end(), this);
         parent->children.resize(distance(parent->children.begin(), it));
     }
@@ -42,7 +42,7 @@ bool GAtom::change_parent(GAtom* new_parent) {
 }
 
 void GAtom::invert() {
-    inverted = !inverted; 
+    inverted = !inverted;
 }
 void GAtom::hard_invert() {
     inverted = !inverted;
@@ -62,14 +62,14 @@ void GAtom::mutate(double time) {
                 i++;
             } while(i < SIZE(dna) && rand()%2 == 0);
         }
-    
+
 }
 void GAtom::split(int position, GAtom* first_parent, GAtom* second_parent) {
     if (inverted) {
         GAtom* first = new GAtom(first_parent, dna.substr(0, position));
         first->inverted = inverted;
         dna = dna.substr(position);
-        this->change_parent(second_parent); 
+        this->change_parent(second_parent);
         first->next = this->next;
         this->next = first;
         vector<GAtom*> children_copy = children;
@@ -85,9 +85,9 @@ void GAtom::split(int position, GAtom* first_parent, GAtom* second_parent) {
         vector<GAtom*> children_copy = children;
         for(GAtom* child : children_copy)
             child->split(position, this, second);
-    } 
+    }
 }
-    
+
 GAtom::GAtom(int length) {
     this->inverted = 0;
     this->next = nullptr;

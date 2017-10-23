@@ -1,6 +1,6 @@
 #include"score.h"
 
-typedef double (*scoring_function) (ScoringData* sd); 
+typedef double (*scoring_function) (ScoringData* sd);
 
 double sc_seq_len(ScoringData* sd) {
     return log(SIZE(sd->last_event->atoms));
@@ -37,13 +37,13 @@ double sc_ev_sides(ScoringData* sd) {
     int b2 = sd->c.b2, e2 = sd->c.e2+dir;
     int size = SIZE(sd->last_event->atoms);
     int res = 0;
-    if (b1 >= 0 && b2 >= 0 && b1<size && b2<size &&  
+    if (b1 >= 0 && b2 >= 0 && b1<size && b2<size &&
         sd->last_event->atoms[b1].type == dir*(sd->last_event->atoms[b2].type))
         res++;
-    if (e1 >= 0 && e2 >= 0 && e1<size && e2<size &&  
+    if (e1 >= 0 && e2 >= 0 && e1<size && e2<size &&
         sd->last_event->atoms[e1].type == dir*(sd->last_event->atoms[e2].type))
         res++;
-    return res;     
+    return res;
 }
 double sc_ev_prev_sp(ScoringData* sd) {
     return SIZE(sd->prev_sp)*0.5;
@@ -117,7 +117,7 @@ vector<double> all_scores(History* h, const Candidate& c, HEvent* e) {
     }
     /*For(i, SIZE(functions)) {
         res.push_back(exp(res[i]));
-        
+
         res.push_back(res[i]/(1+res[0]));
         res.push_back(res[i]/(1+res[1]));
         res.push_back(res[i]/(1+res[2]));
@@ -172,12 +172,12 @@ void compute_pairs(const vector<HAtom>& atoms, set<pii>& bp, set<pii>& sp) {
 ScoringData::ScoringData(History* h, const Candidate& c, HEvent* e) : c(0,0,0,0) {
     this->history = h;
     this->c = c;
-    h->rec_setup_scoring_data(c,e,this); 
+    h->rec_setup_scoring_data(c,e,this);
     set<int> types;
     for(auto atom : last_event->atoms)
         types.insert(atom.atype());
     num_types = SIZE(types);
-   
+
     compute_pairs(first_event->atoms, prev_bp, prev_sp);
     compute_pairs(last_event->atoms, post_bp, post_sp);
     prev_bpc = SIZE(prev_bp);

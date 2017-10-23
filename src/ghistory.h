@@ -11,7 +11,7 @@ class GHistory {
 
 public:
     vector<HEvent*> events;
-    
+
     void clean();
     void generate_random(double time, int sequence_length);
     void save_to_files(string basename, string id = "");

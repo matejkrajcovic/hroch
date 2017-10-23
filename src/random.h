@@ -23,12 +23,12 @@ private:
     const int mean_dist = 306718;
     const double event_rate = 200;
     const double mut_alpha = 1./3.;
-   
+
     static Model* _instance;
     Model();
 public:
     static Model* instance();
-    
+
     const int length_threshold = 50;
     bool is_random_del();
     bool is_random_inv();

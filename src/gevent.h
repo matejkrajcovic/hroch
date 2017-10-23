@@ -9,7 +9,7 @@ class GEvent {
 protected:
     double time_interval;
     int from, to;
-public:    
+public:
     virtual Sequence* perform(Sequence* sequence) = 0;
     virtual string name() = 0;
     virtual string get_string() { return this->name(); }
@@ -50,7 +50,7 @@ public:
 };
 
 class GEventLeaf: public GEvent {
-public: 
+public:
     virtual string name() { return "leaf"; }
     virtual Sequence* perform(Sequence* sequence);
     GEventLeaf(double time_interval = 0.0);
@@ -60,7 +60,7 @@ class GEventRoot: public GEvent {
 public:
     virtual string name() { return "root"; }
     virtual Sequence* perform(Sequence* sequence);
-    GEventRoot(); 
+    GEventRoot();
 };
 
 ostream& operator<<(ostream& os, GEvent& event);

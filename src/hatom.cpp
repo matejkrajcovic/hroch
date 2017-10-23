@@ -24,7 +24,7 @@ void HAtom::clear_strid_mapping() {
 HAtom::HAtom(int type) {
     this->type = type;
 }
-HAtom::HAtom(int type, int id) : 
+HAtom::HAtom(int type, int id) :
     HAtom::HAtom(type) {
     this->add_id(id);
 }

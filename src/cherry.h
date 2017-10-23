@@ -27,7 +27,7 @@ class CherryForest {
 public:
     double cherryness(const HAtom& a, const HAtom& b);
     void merge(const HAtom& a, const HAtom& b);
-    
+
     void read_atom(History* history, int type, string filename);
     CherryForest();
     CherryForest(CherryForest* original);

@@ -57,7 +57,7 @@ void Sequence::split_breakpoints(vector<int> positions) {
 }
 
 set<GAtomType*> Sequence::retype_atoms(int length_threshold) {
-    set<GAtomType*> res; 
+    set<GAtomType*> res;
     int name_id = 0;
     ForGAtom(atom, this) {
         if (atom->length() < length_threshold) {

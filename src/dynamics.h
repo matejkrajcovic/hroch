@@ -4,7 +4,7 @@
 #define DYNAMICS_H
 
 #include"constants.h"
- 
+
 
 class Dynamics {
     const double startp = 1.0;

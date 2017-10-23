@@ -92,10 +92,10 @@ inline bool operator<(const trint& t1, const trint& t2) {
 template<typename T>
 ostream& operator<<(ostream& os, const vector<T> v) {
     os << "[";
-    For(i, SIZE(v)) (i?(os << ", "):os) << v[i]; 
+    For(i, SIZE(v)) (i?(os << ", "):os) << v[i];
     return os << ']';
 }
-template <typename T> 
+template <typename T>
 int sign(T val) {
     return (T(0) < val) - (val < T(0));
 }
@@ -114,7 +114,7 @@ extern double epsilon;
 
 inline void mustbe(const bool& True, const string& message="") {
     if (True!=true) {
-        cerr << "Error: " << message << endl; 
+        cerr << "Error: " << message << endl;
         exit(1);
     }
 }

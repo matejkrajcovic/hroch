@@ -41,7 +41,7 @@ set<Candidate> History::rec_candidates(HEvent* event) {
         }
         return res;
     }
-    
+
     Dynamics d = Dynamics(this, event);
     d.compute_graph(1.2,0.5,0.05);
     For(i, SIZE(event->atoms)) {
@@ -57,7 +57,7 @@ set<Candidate> History::rec_candidates(HEvent* event) {
         c.swap_dir();
         res.insert(c);
     }
-    
+
     return res;
 }
 
@@ -78,7 +78,7 @@ void History::proc_learn() {
     current = new HEvent(current->species, gen_event_name(), "", current);
     events[current->name] = current;
     current->event_time = now_time -= 0.01;
-    
+
     while(!current->is_final()) {
         set<Candidate> cs = rec_candidates(current);
         vector<vdo> good_values;
@@ -86,21 +86,21 @@ void History::proc_learn() {
         for(auto c : cs) {
             vdo values = all_scores(this, c, current);
             HEvent *e = rec_see_event(c,current);
-            if (is_original(e, strict_compare)) 
+            if (is_original(e, strict_compare))
                 good_values.push_back(values);
             else {
                 if (strict_compare != SPECIAL_TRAINING || !is_original(e))
                     bad_values.push_back(values);
             }
-            delete e;            
+            delete e;
             stats["candidates"] += 1;
         }
-        For(i, min(SIZE(good_values), SIZE(bad_values))) 
+        For(i, min(SIZE(good_values), SIZE(bad_values)))
             machine->train_data(good_values[i],1);
         For(i, min(SIZE(good_values), SIZE(bad_values)))
             machine->train_data(bad_values[i],0);
-        
-        
+
+
         int old_strategy = strategy;
         int old_mode = cherry_mode;
         strategy = KNOW_HOW;
@@ -108,7 +108,7 @@ void History::proc_learn() {
         rec_parent(current);
         strategy = old_strategy;
         cherry_mode = old_mode;
-       
+
         if (current->parent == nullptr) return;
         bool correct = is_correct(true);
         while(current->parent != nullptr) {
@@ -116,7 +116,7 @@ void History::proc_learn() {
             events[current->name] = current;
             current->event_time = now_time -= 0.01;
         }
-        if (!correct) return;        
+        if (!correct) return;
     }
     if (is_correct()) stats["full"] = 1;
 }
@@ -127,7 +127,7 @@ void History::proc_reconstruct(int number) {
     assert(SIZE(leaf_species)==1);
     // find last event
     HEvent* current = events.begin()->second;
-    for(auto e : events) 
+    for(auto e : events)
         if (current->event_time > e.second->event_time)
             current = e.second;
     double now_time = current->event_time;
@@ -160,7 +160,7 @@ void History::real_reconstruct() {
     current = new HEvent(current->species, gen_event_name(), "", current);
     events[current->name] = current;
     current->event_time = now_time -= 0.01;
-    
+
     while(!current->is_final()) {
         rec_parent(current);
         if (current->parent == nullptr) {
@@ -198,7 +198,7 @@ void History::proc_test_candi(int strategy, string mark) {
         oke_cnt += (best==SAME_LAST);
         size_sum += SIZE(cs);
     }
-    
+
     stats["_size "+mark] = double(size_sum)/tot_cnt;
     stats["etest "+mark] = double(oke_cnt)/tot_cnt;
     stats["ctest "+mark] = double(ok_cnt)/tot_cnt;
@@ -243,7 +243,7 @@ void History::proc_test_score(int strategy, string mark) {
             }
             max_score = max(max_score, score);
             //if (i == 0) {
-            //    cout << mark << "score " << is_original(e) << " is " << score << endl; 
+            //    cout << mark << "score " << is_original(e) << " is " << score << endl;
             //}
             tot_score += score;
             delete e;
@@ -254,7 +254,7 @@ void History::proc_test_score(int strategy, string mark) {
         size_sum += SIZE(cs);
     }
     if (machine != nullptr) delete machine;
-    
+
     stats["_size "+mark] = double(size_sum)/tot_cnt;
     stats["cnt   "+mark] = double(sum_cnt)/tot_cnt;
     stats["score "+mark] = double(sum_prob)/tot_cnt;

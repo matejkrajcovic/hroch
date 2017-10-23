@@ -21,12 +21,12 @@ History::History(string atoms_file, string trees_dir, int strategy) {
     open_check(f, atoms_file);
     read_atoms(f);
     f.close();
-    
+
     cherry_forest = nullptr;
     if (do_cheeryness) {
         read_cherryness(trees_dir + "/");
-    } 
-    
+    }
+
     for(auto la : leaf_atoms) {
         HEvent* e = new HEvent(la.first, gen_event_name(), "leaf");
         e->atoms = la.second;
@@ -39,7 +39,7 @@ History::History(string basename, string id) {
     init_zero();
     if (SIZE(id)) basename += "-" + id;
     ifstream f;
-    cout << "Loading " << basename << endl; 
+    cout << "Loading " << basename << endl;
 
     for(string species : {"unicorn"}) {
         open_check(f, basename+"-"+species+".dna");
@@ -62,8 +62,8 @@ History::History(string basename, string id) {
         for(string species : {"unicorn"}) {
             read_cherryness(DATAPATH "dupstemp_data-generated-" + id + "-" + species + "-dna/");
         }
-    } 
-    cout << "       " << basename << " loaded" << endl; 
+    }
+    cout << "       " << basename << " loaded" << endl;
 }
 
 string History::gen_event_name() {
@@ -117,9 +117,9 @@ void History::read_atoms(istream& is) {
 
 void History::read_atoms_align(const string& basepath) {
     map<int, ifstream> files;
-    for(auto atoms : leaf_atoms) for(HAtom atom : atoms.second) 
+    for(auto atoms : leaf_atoms) for(HAtom atom : atoms.second)
         if (files.count(atom.atype()) == 0)
-            open_check(files[atom.atype()], 
+            open_check(files[atom.atype()],
                        basepath+to_string(atom.atype())+".aln");
     for(auto& f : files) {
         string word, buffer, name;
@@ -142,7 +142,7 @@ void History::read_events(istream& is) {
         istringstream iss(line);
         e = new HEvent(this, iss);
         events[e->name] = e;
-        if (e->type == "leaf") 
+        if (e->type == "leaf")
             leaf_events[e->species] = e;
     }
     e->atoms = leaf_atoms[e->species];
@@ -170,7 +170,7 @@ void History::read_events(istream& is) {
 void History::read_cherryness(const string& basepath) {
     cherry_forest = new CherryForest();
     set<int> atom_types;
-    for(auto la : leaf_atoms) for (auto atom : la.second) 
+    for(auto la : leaf_atoms) for (auto atom : la.second)
         atom_types.insert(atom.atype());
     for(const auto& at : atom_types) {
         cherry_forest->read_atom(this, at, basepath + to_string(at) + ".nex.trprobs");
@@ -219,7 +219,7 @@ double History::get_time() {
 int History::is_original(HEvent* event, bool strict) {
     assert(SIZE(event->atom_parents));
     event->compute_diff();
-    for(auto ev : original->events) 
+    for(auto ev : original->events)
         if (*(ev.second) == *(event)) {
             if (strict && ev.second->compute_is_left() !=
                 event->compute_is_left()) continue;
@@ -265,7 +265,7 @@ HEvent* History::resolve_deletion(HEvent* deletion) {
     for(int p : deletion->atom_parents) delp.insert(p);
     HEvent* cdup = deletion->parent;
     For(i, SIZE(cdup->atoms)) if (!delp.count(i)) ptc.push_back(i);
-    
+
     while(cdup != nullptr) {
         if (cdup->type == "dup" || cdup->type == "dupi") {
             bool inside = false;
@@ -285,14 +285,14 @@ HEvent* History::resolve_deletion(HEvent* deletion) {
             for(int p : cdup->atom_parents) delp.insert(p);
             For(i, SIZE(cdup->parent->atoms)) if (!delp.count(i)) ptc.push_back(i);
         }
-        cdup = cdup->parent; 
+        cdup = cdup->parent;
 
     }
     return nullptr;
 }
 
 double History::cherryness(const HAtom& a, const HAtom& b, int mode) {
-    if (!mode) mode = cherry_mode; 
+    if (!mode) mode = cherry_mode;
     if (mode == KNOW_HOW) {
         HEvent* event = original->nth_from_end(SIZE(events)-1);
         if (event->type == "del") event = resolve_deletion(event);
@@ -317,7 +317,7 @@ double History::cherryness(const HAtom& a, const HAtom& b, int mode) {
 void History::merge(const HAtom& a, const HAtom& b) {
     cherry_forest->merge(a,b);
 }
-    
+
 void History::set_strategy(int strategy, Machine* machine) {
     switch(strategy) {
         case NO_STRATEGY:

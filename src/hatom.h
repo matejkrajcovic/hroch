@@ -8,7 +8,7 @@
 class HAtom {
     static map<string, int> si_map;
     static map<int, string> is_map;
-    
+
     vector<int> ids;
 public:
     static string id_to_str(const int& id);

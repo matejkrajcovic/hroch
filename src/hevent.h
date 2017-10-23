@@ -19,9 +19,9 @@ public:
     Candidate(int b1, int e1, int b2, int e2, const vector<int>& directions);
 
     void swap_dir();
-    
+
     friend bool operator==(const Candidate& c1, const Candidate& c2) {
-        return (c1.b1 == c2.b1) && 
+        return (c1.b1 == c2.b1) &&
                (c1.e1 == c2.e1) &&
                (c1.b2 == c2.b2) &&
                (c1.e2 == c2.e2) &&
@@ -43,11 +43,11 @@ ostream& operator<<(ostream& os, const Candidate& c);
 class HEvent {
 public:
     vector<HAtom> diff_atoms;
-    
+
     string species, name, type;
     double edge_time, event_time;
     HEvent* parent;
-  
+
     vector<HAtom> atoms;
     vector<int> atom_parents;
 

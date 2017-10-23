@@ -4,7 +4,7 @@ void generate_history(double time, string id) {
     GHistory* history = new GHistory();
     history->generate_random(time, 100000);
     history->save_to_files(DATAPATH "generated", id);
-    delete history; 
+    delete history;
 }
 
 void generate_test() {
@@ -47,14 +47,14 @@ void test_candi() {
         History* h0 = new History(DATAPATH "generated", prefix+to_string(hid));
         History* h1 = new History(h0);
         h1->stats["_name"] = hid;
-        
+
         h1->proc_test_candi(CHERRY_NO,"1nc");
         h1->proc_test_candi(CHERRY_TREE,"1ct");
         h1->proc_test_candi(CHERRY_LEN,"1cl");
         h1->proc_test_candi(SCORE_BAC_NC,"nc ");
         h1->proc_test_candi(SCORE_BAC,"def");
         h1->proc_test_candi(SCORE_CL,"cl ");
-    
+
         h1->write_stats(file);
         file << endl;
         for(auto sp : h1->stats) stat_val[sp.first].push_back(sp.second);
@@ -77,13 +77,13 @@ void test_score() {
         History* h0 = new History(DATAPATH "generated", prefix+to_string(hid));
         History* h1 = new History(h0);
         h1->stats["_name"] = hid;
-        
+
         h1->proc_test_score(CHERRY_TREE,"1ct");
         h1->proc_test_score(SCORE_BAC_NC,"nc ");
         h1->proc_test_score(SCORE_BAC,"def");
         h1->proc_test_score(SCORE_LR,"lr ");
         h1->proc_test_score(SCORE_LRS,"lrs");
-    
+
         h1->write_stats(file);
         file << endl;
         for(auto sp : h1->stats) stat_val[sp.first].push_back(sp.second);
@@ -102,7 +102,7 @@ void train_history(Machine* machine, string name) {
         cout << "Could not train with hitory " << name << endl;
         return;
     }
-    
+
     History* hsp = new History(h0);
     hsp->set_strategy(SCORE_LR,machine);
     hsp->proc_learn();
@@ -136,7 +136,7 @@ void reconstruct_one(History* h0, string hid, int strategy) {
     double avg_num_events = 0.0;
     vector<int> dist_num_events(1000,0);
     vector<int> cnt_events(SIZE(h0->events)-1,0);
-    
+
     For(i, attempts) {
         if (i>0 && i%2000==0) cout << "history " << hid << "  attempt " << i << endl;
         History* h1 = new History(h0);
@@ -151,11 +151,11 @@ void reconstruct_one(History* h0, string hid, int strategy) {
         delete h1;
     }
     avg_num_events /= attempts;
-    while(SIZE(dist_num_events) && dist_num_events.back() == 0) 
+    while(SIZE(dist_num_events) && dist_num_events.back() == 0)
         dist_num_events.pop_back();
     dist_num_events[SIZE(h0->events)-1]--;
 
-    cout << "  " << SIZE(h0->events) << " events,  " 
+    cout << "  " << SIZE(h0->events) << " events,  "
          << SIZE(h0->leaf_atoms.begin()->second) << " atoms" << endl;
     cout << "  max_events " << max_events << "    " << cnt_events << endl;
     if (stats) {
@@ -196,14 +196,14 @@ void reconstruct(string atoms_file, string trees_dir, int count, int strategy) {
     for(auto& c : outputfile_name) if (c=='/') c = '-';
     outputfile_name = "outputs/"+outputfile_name+".histories";
     ofstream ofile(outputfile_name, fstream::out);
-    
+
     Machine* machine = nullptr;
     if (strategy == SCORE_CL) machine = new MachineOne();
     if (strategy == SCORE_BAC_NC) machine = new MachineBachelor();
     if (strategy == SCORE_BAC) machine = new MachineBachelor();
     if (strategy == SCORE_LR) machine = new MachineLinear();
     if (machine != nullptr) machine->load();
-    
+
     int shortest = 123456789;
     vector<History*> hists;
     vector<int> lengths(1000, 0);

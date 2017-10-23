@@ -33,19 +33,19 @@ void Candidate::swap_dir() {
 
 
 ostream& operator<<(ostream& os, const Candidate& c) {
-    return os << "(" << c.b1 << " " << c.e1 << " -> " 
+    return os << "(" << c.b1 << " " << c.e1 << " -> "
        << c.b2 << " " << c.e2 << " " << c.directions << ")";
 }
 
 
 ostream& operator<<(ostream& os, const HEvent& event) {
-    os << event.species << " " << event.name << " " << (event.parent?event.parent->name:"root") 
+    os << event.species << " " << event.name << " " << (event.parent?event.parent->name:"root")
        << " " << event.event_time << " " << event.type << " ";
 
     for(auto a : event.atoms) os << a.type << " ";
     os << "#";
     for(auto a : event.atom_parents) os << " " << a;
-    return os << endl; 
+    return os << endl;
 }
 
 HEvent::HEvent() {
@@ -73,7 +73,7 @@ HEvent::HEvent(string species, string name, string type, HEvent* same_child) :
     HEvent::HEvent(species, name, type) {
     this->atoms = same_child->atoms;
     same_child->parent = this;
-    For(i, SIZE(same_child->atoms)) same_child->atom_parents.push_back(i);        
+    For(i, SIZE(same_child->atoms)) same_child->atom_parents.push_back(i);
 }
 
 HEvent::HEvent(History* history, istringstream& iss) : HEvent::HEvent() {
@@ -152,7 +152,7 @@ int HEvent::compute_is_left() {
     map<int, int> M;
     for(auto p : atom_parents) M[p]++;
     For(i, SIZE(atom_parents)) if (M[atom_parents[i]] > 1) {
-        return (atom_parents[i]==i); 
+        return (atom_parents[i]==i);
     }
     return -1;
 }
@@ -162,9 +162,9 @@ void HEvent::compute_diff(const vector<HAtom>& diff) {
     map<int, int> M;
     for(auto p : atom_parents) M[p]++;
     diff_atoms.clear();
-    For(i, SIZE(atom_parents)) if (M[atom_parents[i]] > 1) 
+    For(i, SIZE(atom_parents)) if (M[atom_parents[i]] > 1)
         diff_atoms.push_back(atoms[i]);
-    sort(diff_atoms.begin(), diff_atoms.end()); 
+    sort(diff_atoms.begin(), diff_atoms.end());
 }
 
 void HEvent::test_stats(History* h, ostream& os) {
@@ -175,7 +175,7 @@ void HEvent::test_stats(History* h, ostream& os) {
     for(auto p : M) {
         if (SIZE(p.second) == 2) {
             if (reverse) swap(p.second[0],p.second[1]);
-            os << p.second[0].type << "(" 
+            os << p.second[0].type << "("
                << p.second[0].get_ids() << p.second[1].get_ids()
                << h->cherryness(p.second[0],p.second[1]) << ")  ";
         }

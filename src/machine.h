@@ -32,7 +32,7 @@ public:
     void save();
     void load();
     double predict(const vector<double>& values);
-    
+
 };
 
 class MachineLinearStrict: public MachineLinear {

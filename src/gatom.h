@@ -11,7 +11,7 @@ public:
     static void reset_ids() {type_cnt = 0;}
     int id;
     GAtom* root;
-    
+
     void split(int position);
     void invert();
     GAtomType(GAtom* root);
@@ -32,16 +32,16 @@ public:
     int get_id() { return inverted?-type->id:type->id; }
     const string& get_dna() { return dna; }
     bool is_inverted() { return inverted; }
-    string get_name() { return name; } 
-    void set_name(const string& str) { name = str; } 
+    string get_name() { return name; }
+    void set_name(const string& str) { name = str; }
 
     bool change_parent(GAtom* new_parent); // return if changed
     void unlink_parent() { change_parent(nullptr); }
     void invert();
     void hard_invert();
     void mutate(double time);
-    void split(int position, GAtom* first_parent, GAtom* second_parent); 
-    GAtom* duplicate();                                      
+    void split(int position, GAtom* first_parent, GAtom* second_parent);
+    GAtom* duplicate();
     GAtom(int length = 0);
     GAtom(GAtom* parent, const string& dna);
 

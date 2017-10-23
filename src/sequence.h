@@ -10,7 +10,7 @@ public:
     GAtom* first;
     double age;
     string name;
-   
+
     Sequence(double age = 0.0, int length = 0);
     Sequence(Sequence* parent);
     ~Sequence();

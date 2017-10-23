@@ -15,7 +15,7 @@
 #define CHERRY_LEN 3
 #define SCORE_CL 4
 #define SCORE_BAC_NC 5
-#define SCORE_BAC 6 
+#define SCORE_BAC 6
 #define SCORE_LR 7
 #define SCORE_LRS 8
 #define KNOW_HOW 9
@@ -69,7 +69,7 @@ public:
     void read_atoms_align(const string& basepath);
     void read_events(istream& is);
     void read_cherryness(const string& basepath);
-   
+
     string gen_event_name();
     void save(string name);
     void write_events(ostream& os);
