@@ -36,17 +36,10 @@ class Machine;
 class ScoringData;
 
 typedef pair<int, int> pii;
-typedef pair<pii, int> piii;
-typedef pair<pii, double> piid;
 
-typedef vector<pii> vpi;
-typedef vector<vpi> vvpi;
 typedef vector<int> vi;
-typedef vector<vi> vvi;
-typedef vector<vvi> vvvi;
 typedef vector<double> vdo;
 typedef vector<vdo> vvdo;
-typedef vector<trint> vtri;
 
 #include"random.h"
 #include"gatom.h"
