@@ -16,10 +16,7 @@
 #include<tuple>
 using namespace std;
 
-#define For(i,n) for(int i=0; i<int(n); ++i)
-#define ForGAtom(atom, sequence) for(GAtom* atom = (sequence)->first; atom != nullptr; atom = atom->next)
 #define SIZE(i) int(i.size())
-#define UNUSED(x) (void)(x)
 
 class GAtom;
 class GAtomType;
@@ -41,6 +38,7 @@ typedef vector<int> vi;
 typedef vector<double> vdo;
 typedef vector<vdo> vvdo;
 
+#include"utils.h"
 #include"random.h"
 #include"gatom.h"
 #include"gevent.h"
@@ -53,17 +51,6 @@ typedef vector<vdo> vvdo;
 #include"dynamics.h"
 #include"score.h"
 #include"machine.h"
-
-template<typename T>
-ostream& operator<<(ostream& os, const vector<T> v) {
-    os << "[";
-    For(i, SIZE(v)) (i?(os << ", "):os) << v[i];
-    return os << ']';
-}
-template <typename T>
-int sign(T val) {
-    return (T(0) < val) - (val < T(0));
-}
 
 extern string datapath;
 
