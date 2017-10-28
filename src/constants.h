@@ -71,7 +71,6 @@ extern int LOWER_RANGE;
 extern int UPPER_RANGE;
 extern string TEST_CASE;
 
-extern int fail_on_error;
 extern int error_happened;
 extern int debuging;
 extern int stats;
@@ -83,13 +82,6 @@ extern char bases[];
 extern int base_id[256];
 extern char base_inv[256];
 extern double epsilon;
-
-inline void mustbe(const bool& True, const string& message="") {
-    if (True!=true) {
-        cerr << "Error: " << message << endl;
-        exit(1);
-    }
-}
 
 void setup_constants();
 set<string> parse_arguments(int argc, char **argv);

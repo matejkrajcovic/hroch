@@ -136,7 +136,10 @@ void GHistory::write_atoms_align(string basepath) {
     ForGAtom(atom, sequences.back()) {
         int id = atom->get_type()->id;
         if (id) {
-            mustbe(files.count(id), "Not found type for atom");
+            if (!files.count(id)) {
+                cerr << "Error: Not found type for atom\n";
+                exit(1);
+            }
             files[id] << ">" << atom->get_name() << endl
                       << atom->get_dna() << endl;
         }
