@@ -13,7 +13,7 @@ class Dynamics {
     vector<int> atoms;
     vector<vector<vector<double>>> cherryness;
     vector<vector<vector<double>>> mass;
-    vector<pair<double, trint>> all_endpoints;
+    vector<pair<double, tuple<int, int, int>>> all_endpoints;
     //vector<double> csum_ep;
     double sum_endpoints;
     double dupm, delm, deli, deli3;

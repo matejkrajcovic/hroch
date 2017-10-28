@@ -13,6 +13,7 @@
 #include<cmath>
 #include<cassert>
 #include<queue>
+#include<tuple>
 using namespace std;
 
 #define For(i,n) for(int i=0; i<int(n); ++i)
@@ -20,7 +21,6 @@ using namespace std;
 #define SIZE(i) int(i.size())
 #define UNUSED(x) (void)(x)
 
-struct trint;
 class GAtom;
 class GAtomType;
 class GEvent;
@@ -53,27 +53,6 @@ typedef vector<vdo> vvdo;
 #include"dynamics.h"
 #include"score.h"
 #include"machine.h"
-
-struct trint {
-    int a,b,c;
-    trint() {a = b = c = 0;}
-    trint(const int& a, const int& b, const int& c) {
-        this->a = a;
-        this->b = b;
-        this->c = c;
-    }
-};
-inline bool operator==(const trint& t1, const trint& t2) {
-    return t1.a==t2.a && t1.b==t2.b && t1.c==t2.c;
-}
-inline bool operator!=(const trint& t1, const trint& t2) {
-    return t1.a!=t2.a || t1.b!=t2.b || t1.c!=t2.c;
-}
-inline bool operator<(const trint& t1, const trint& t2) {
-    if (t1.a!=t2.a) return t1.a<t2.a;
-    if (t1.b!=t2.b) return t1.b<t2.b;
-    return t1.c<t2.c;
-}
 
 template<typename T>
 ostream& operator<<(ostream& os, const vector<T> v) {

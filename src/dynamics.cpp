@@ -49,7 +49,10 @@ void Dynamics::compute_graph(double dupm, double delm, double deli) {
                     mass[i][j][BASE+k] += mass[i+dx[BASE+k]][j+dy[BASE+k]][BASE+l] *
                         multi[k][l] * cherryness[i][j][BASE+k];
             if(i!=j && atoms[i-1] == atoms[j-1])
-                all_endpoints.push_back({mass[i][j][BASE+LEV],trint(i,j,BASE+LEV)});
+                all_endpoints.push_back({
+                    mass[i][j][BASE+LEV],
+                    make_tuple(i,j,BASE+LEV),
+                });
         }
         // inverse duplications
         for(int j = n; j>0; --j) if (i!=j) {
@@ -59,7 +62,10 @@ void Dynamics::compute_graph(double dupm, double delm, double deli) {
                     mass[i][j][BASEI+k] += mass[i+dx[BASEI+k]][j+dy[BASEI+k]][BASEI+l]
                         * multi[k][l] * cherryness[i][j][BASEI+k];
             if(atoms[i-1] == -atoms[j-1])
-                all_endpoints.push_back({mass[i][j][BASEI+LEV],trint(i,j,BASEI+LEV)});
+                all_endpoints.push_back({
+                    mass[i][j][BASEI+LEV],
+                    make_tuple(i,j,BASEI+LEV),
+                });
         }
     }
     // optimalisation
@@ -92,8 +98,8 @@ Candidate Dynamics::get_candidate(bool maximal) {
         pos = 0;
     }
 
-    trint xyz = all_endpoints[pos].second;
-    int x = xyz.a, y = xyz.b, z = xyz.c;
+    int x, y, z;
+    tie(x, y, z) = all_endpoints[pos].second;
     int end1 = x, end2 = y;
     vector<int> directions;
 
