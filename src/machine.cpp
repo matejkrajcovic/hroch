@@ -21,7 +21,7 @@ void MachineLinear::save() {
     if (strict_compare==SPECIAL_TRAINING) strict = "-special";
     ofstream file("regres/lr-train"+strict, fstream::out);
     for(auto d : data)
-        For(i,SIZE(d)) file << d[i] << char((i+1==SIZE(d))?'\n':' ');
+        For(i,d.size()) file << d[i] << char((i+1==(int)d.size())?'\n':' ');
     file.close();
 }
 void MachineLinear::load() {
@@ -50,9 +50,9 @@ void MachineLinearStrict::load() {
 }
 
 double MachineLinear::predict(const vector<double>& values) {
-    assert(SIZE(values) == SIZE(coef));
+    assert(values.size() == coef.size());
     double res = intercept;
-    For(i, SIZE(values)) res += values[i]*coef[i];
+    For(i, values.size()) res += values[i]*coef[i];
     //return pow(1./(1.+exp(-res)),4);
     return 1./(1.+exp(-res));
 }

@@ -28,11 +28,11 @@ CherryTree::CherryTree(const CherryTree& ct) {
 CherryTree::CherryTree(double probability, int atype, map<string, int>& ids, const string& word) {
     this->probability = probability;
     this->atype = atype;
-    this->parse(ids, word, 0, SIZE(word));
+    this->parse(ids, word, 0, word.size());
 }
 
 int CherryTree::parse(map<string,int>& ids, const string& word, int from, int to) {
-    int me = SIZE(edges);
+    int me = edges.size();
     edges.push_back(vi());
 
     if (word[from] == '(') {

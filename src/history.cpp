@@ -37,7 +37,7 @@ History::History(string atoms_file, string trees_dir, int strategy) {
 
 History::History(string basename, string id) {
     init_zero();
-    if (SIZE(id)) basename += "-" + id;
+    if (id.size()) basename += "-" + id;
     ifstream f;
     cout << "Loading " << basename << endl;
 
@@ -67,7 +67,7 @@ History::History(string basename, string id) {
 }
 
 string History::gen_event_name() {
-    return "e-"+to_string(SIZE(events));
+    return "e-"+to_string(events.size());
 }
 
 History::History(History* original) {
@@ -125,12 +125,12 @@ void History::read_atoms_align(const string& basepath) {
         string word, buffer, name;
         while(f.second >> word) {
             if (word[0] == '>') {
-                if (SIZE(name)) leaf_atom_dna[HAtom::str_to_id(name)] = buffer;
+                if (name.size()) leaf_atom_dna[HAtom::str_to_id(name)] = buffer;
                 buffer.clear();
                 name = word.substr(1);
             } else buffer += word;
         }
-        if (SIZE(name)) leaf_atom_dna[HAtom::str_to_id(name)] = buffer;
+        if (name.size()) leaf_atom_dna[HAtom::str_to_id(name)] = buffer;
         f.second.close();
     }
 }
@@ -195,10 +195,10 @@ void History::save(string name) {
 }
 
 void History::write_stats(ostream& os) {
-    assert(SIZE(leaf_species)==1);
+    assert(leaf_species.size()==1);
     string species = leaf_species[0];
-    os << species << " " << SIZE(leaf_atoms[species]) << " atoms ";
-    os << SIZE(original->events) << " events; time: " << original->get_time();
+    os << species << " " << leaf_atoms[species].size() << " atoms ";
+    os << original->events.size() << " events; time: " << original->get_time();
     os << " (dc" << do_cheeryness << ")" << endl;
     original->nth_from_end(1)->test_stats(this, os);
 
@@ -217,7 +217,7 @@ double History::get_time() {
 }
 
 int History::is_original(HEvent* event, bool strict) {
-    assert(SIZE(event->atom_parents));
+    assert(event->atom_parents.size());
     event->compute_diff();
     for(auto ev : original->events)
         if (*(ev.second) == *(event)) {
@@ -230,7 +230,7 @@ int History::is_original(HEvent* event, bool strict) {
 }
 
 bool History::same_as(History *h) {
-    if (SIZE(events) != SIZE(h->events)) return false;
+    if (events.size() != h->events.size()) return false;
     for(auto ev : events) ev.second->compute_diff();
     for(auto ev : h->events) ev.second->compute_diff();
     for(auto ev : events) {
@@ -242,7 +242,7 @@ bool History::same_as(History *h) {
 }
 
 int History::is_correct(bool weak) {
-    if (!weak && SIZE(events) != SIZE(original->events))
+    if (!weak && events.size() != original->events.size())
         return false;
     for(auto ev : events)
         if(!is_original(ev.second)) {
@@ -252,7 +252,7 @@ int History::is_correct(bool weak) {
 }
 
 HEvent* History::nth_from_end(int n) {
-    assert(SIZE(leaf_events)==1);
+    assert(leaf_events.size()==1);
     HEvent* last = leaf_events.begin()->second;
     For(i, n) last = last->parent;
     return last;
@@ -264,7 +264,7 @@ HEvent* History::resolve_deletion(HEvent* deletion) {
     set<int> delp;
     for(int p : deletion->atom_parents) delp.insert(p);
     HEvent* cdup = deletion->parent;
-    For(i, SIZE(cdup->atoms)) if (!delp.count(i)) ptc.push_back(i);
+    For(i, cdup->atoms.size()) if (!delp.count(i)) ptc.push_back(i);
 
     while(cdup != nullptr) {
         if (cdup->type == "dup" || cdup->type == "dupi") {
@@ -279,11 +279,11 @@ HEvent* History::resolve_deletion(HEvent* deletion) {
             if (border) return nullptr;
             if (inside) return cdup;
         }
-        For(i, SIZE(ptc)) ptc[i] = cdup->atom_parents[ptc[i]];
+        For(i, ptc.size()) ptc[i] = cdup->atom_parents[ptc[i]];
         if (cdup->type == "del") {
             delp.clear();
             for(int p : cdup->atom_parents) delp.insert(p);
-            For(i, SIZE(cdup->parent->atoms)) if (!delp.count(i)) ptc.push_back(i);
+            For(i, cdup->parent->atoms.size()) if (!delp.count(i)) ptc.push_back(i);
         }
         cdup = cdup->parent;
 
@@ -294,11 +294,11 @@ HEvent* History::resolve_deletion(HEvent* deletion) {
 double History::cherryness(const HAtom& a, const HAtom& b, int mode) {
     if (!mode) mode = cherry_mode;
     if (mode == KNOW_HOW) {
-        HEvent* event = original->nth_from_end(SIZE(events)-1);
+        HEvent* event = original->nth_from_end(events.size()-1);
         if (event->type == "del") event = resolve_deletion(event);
         if (event == nullptr) return 0.0;
         int x = -1, y = -2;
-        For(i, SIZE(event->atoms)) {
+        For(i, event->atoms.size()) {
             if (event->atoms[i]==a) x = i;
             if (event->atoms[i]==b) y = i;
         }

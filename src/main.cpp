@@ -26,11 +26,11 @@ void write_all_stats(map<string, vector<double>>& stats, ostream& os) {
         sort(stat.begin(), stat.end());
         double avg = 0;
         for(double d : stat) avg += d;
-        avg /= SIZE(stat);
+        avg /= stat.size();
         double p0 = stat[0];
-        double p10 = stat[int(SIZE(stat)*0.1)];
-        double p50 = stat[int(SIZE(stat)*0.5)];
-        double p90 = stat[int(SIZE(stat)*0.9)];
+        double p10 = stat[int(stat.size()*0.1)];
+        double p50 = stat[int(stat.size()*0.5)];
+        double p90 = stat[int(stat.size()*0.9)];
 
         os << sp.first << "  AGV: " << avg
            << "   0% " <<  p0 << "  10% " << p10
@@ -135,7 +135,7 @@ void reconstruct_one(History* h0, string hid, int strategy) {
     int max_events = 0;
     double avg_num_events = 0.0;
     vector<int> dist_num_events(1000,0);
-    vector<int> cnt_events(SIZE(h0->events)-1,0);
+    vector<int> cnt_events(h0->events.size()-1,0);
 
     For(i, attempts) {
         if (i>0 && i%2000==0) cout << "history " << hid << "  attempt " << i << endl;
@@ -145,18 +145,18 @@ void reconstruct_one(History* h0, string hid, int strategy) {
         max_events = max(max_events, int(h1->stats["max_events"]));
         cnt_events[int(h1->stats["max_events"])]++;
         if (stats) {
-            avg_num_events += SIZE(h1->events);
-            dist_num_events[SIZE(h1->events)]++;
+            avg_num_events += h1->events.size();
+            dist_num_events[h1->events.size()]++;
         }
         delete h1;
     }
     avg_num_events /= attempts;
-    while(SIZE(dist_num_events) && dist_num_events.back() == 0)
+    while(dist_num_events.size() && dist_num_events.back() == 0)
         dist_num_events.pop_back();
-    dist_num_events[SIZE(h0->events)-1]--;
+    dist_num_events[h0->events.size()-1]--;
 
-    cout << "  " << SIZE(h0->events) << " events,  "
-         << SIZE(h0->leaf_atoms.begin()->second) << " atoms" << endl;
+    cout << "  " << h0->events.size() << " events,  "
+         << h0->leaf_atoms.begin()->second.size() << " atoms" << endl;
     cout << "  max_events " << max_events << "    " << cnt_events << endl;
     if (stats) {
         cout << "  length of events: avg=" <<avg_num_events << "  ::  ";
@@ -212,7 +212,7 @@ void reconstruct(string atoms_file, string trees_dir, int count, int strategy) {
         History* h = new History(atoms_file, trees_dir, strategy);
         h->set_strategy(strategy, machine);
         h->real_reconstruct();
-        int num_events = SIZE(h->events);
+        int num_events = h->events.size();
         lengths[num_events]++;
         if (num_events < shortest) {
             shortest = num_events;

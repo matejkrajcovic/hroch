@@ -3,7 +3,7 @@
 typedef double (*scoring_function) (ScoringData* sd);
 
 double sc_seq_len(ScoringData* sd) {
-    return log(SIZE(sd->last_event->atoms));
+    return log(sd->last_event->atoms.size());
 }
 double sc_seq_num_types(ScoringData* sd) {
     return log(sd->num_types);
@@ -18,7 +18,7 @@ double sc_post_bpc(ScoringData* sd) {
     return log(sd->post_bpc);
 }
 double sc_ev_len(ScoringData* sd) {
-    return log(SIZE(sd->c.directions));
+    return log(sd->c.directions.size());
 }
 double sc_ev_dist(ScoringData* sd) {
     int e = min(sd->c.e1, max(sd->c.e2,sd->c.b2-1));
@@ -26,16 +26,16 @@ double sc_ev_dist(ScoringData* sd) {
     return log(b-e);
 }
 double sc_del_num(ScoringData* sd) {
-    return SIZE(sd->deletions);
+    return sd->deletions.size();
 }
 double sc_del_len(ScoringData* sd) {
-    return log(1+SIZE(sd->c.directions) - SIZE(sd->atom_friends));
+    return log(1+sd->c.directions.size() - sd->atom_friends.size());
 }
 double sc_ev_sides(ScoringData* sd) {
     int dir = (sd->c.is_inv())?-1:1;
     int b1 = sd->c.b1, e1 = sd->c.e1+1;
     int b2 = sd->c.b2, e2 = sd->c.e2+dir;
-    int size = SIZE(sd->last_event->atoms);
+    int size = sd->last_event->atoms.size();
     int res = 0;
     if (b1 >= 0 && b2 >= 0 && b1<size && b2<size &&
         sd->last_event->atoms[b1].type == dir*(sd->last_event->atoms[b2].type))
@@ -46,24 +46,24 @@ double sc_ev_sides(ScoringData* sd) {
     return res;
 }
 double sc_ev_prev_sp(ScoringData* sd) {
-    return SIZE(sd->prev_sp)*0.5;
+    return sd->prev_sp.size()*0.5;
 }
 double sc_ev_post_sp(ScoringData* sd) {
-    return SIZE(sd->post_sp)*0.5;
+    return sd->post_sp.size()*0.5;
 }
 double sc_ev_prev_bp(ScoringData* sd) {
-    return SIZE(sd->prev_bp)*0.5;
+    return sd->prev_bp.size()*0.5;
 }
 double sc_ev_post_bp(ScoringData* sd) {
-    return SIZE(sd->post_bp)*0.5;
+    return sd->post_bp.size()*0.5;
 }
 double sc_ev_dsig(ScoringData* sd) {
     if (!sd->c.is_inv()) return 0.0;
     set<int> prev_types, post_types;
     for(auto atom : sd->first_event->atoms) prev_types.insert(atom.type);
     for(auto atom : sd->last_event->atoms) post_types.insert(atom.type);
-    int before = SIZE(prev_types) - sd->num_types;
-    int diff = SIZE(post_types) - sd->num_types - before;
+    int before = prev_types.size() - sd->num_types;
+    int diff = post_types.size() - sd->num_types - before;
     return log(1.+diff/(1.+before));
 }
 
@@ -72,7 +72,7 @@ double sc_avg_cherry(ScoringData* sd) {
     for(auto ap : sd->atom_friends) {
         sum += sd->history->cherryness(ap.first, ap.second, CHERRY_TREE);
     }
-    return sum / double(SIZE(sd->atom_friends));
+    return sum / double(sd->atom_friends.size());
 }
 double sc_prod_cherry(ScoringData* sd) {
     double prod = 1.;
@@ -110,12 +110,12 @@ vector<double> all_scores(History* h, const Candidate& c, HEvent* e) {
         sc_prod_cherry,
         sc_len_cherry,
     };
-    vector<double> res(SIZE(functions));
+    vector<double> res(functions.size());
     ScoringData* sd = new ScoringData(h,c,e);
-    For(i, SIZE(functions)) {
+    For(i, functions.size()) {
         res[i] = functions[i](sd);
     }
-    /*For(i, SIZE(functions)) {
+    /*For(i, functions.size()) {
         res.push_back(exp(res[i]));
 
         res.push_back(res[i]/(1+res[0]));
@@ -138,9 +138,9 @@ void compute_pairs(const vector<HAtom>& atoms, set<pii>& bp, set<pii>& sp) {
     for(auto atom : atoms) max_atom = max(max_atom, atom.atype());
     vi side_cnt[2] = {vi(max_atom + 1, 0), vi(max_atom + 1, 0)};
     vi side_last[2] = {vi(max_atom + 1, 0), vi(max_atom + 1, 0)};
-    For(i, SIZE(atoms)+1) {
+    For(i, atoms.size()+1) {
         int x = (i==0)?0:atoms[i-1].type;
-        int y = (i==SIZE(atoms))?0:atoms[i].type;
+        int y = (i==(int)atoms.size())?0:atoms[i].type;
         bp.insert({x, y});
         bp.insert({-y, -x});
         side = (x>=0);
@@ -176,12 +176,12 @@ ScoringData::ScoringData(History* h, const Candidate& c, HEvent* e) : c(0,0,0,0)
     set<int> types;
     for(auto atom : last_event->atoms)
         types.insert(atom.atype());
-    num_types = SIZE(types);
+    num_types = types.size();
 
     compute_pairs(first_event->atoms, prev_bp, prev_sp);
     compute_pairs(last_event->atoms, post_bp, post_sp);
-    prev_bpc = SIZE(prev_bp);
-    post_bpc = SIZE(post_bp);
+    prev_bpc = prev_bp.size();
+    post_bpc = post_bp.size();
     set<pii> intersection_bp;
     for(pii bp : prev_bp) if (post_bp.count(bp)) intersection_bp.insert(bp);
     for(pii bp : intersection_bp) {
@@ -197,7 +197,7 @@ ScoringData::ScoringData(History* h, const Candidate& c, HEvent* e) : c(0,0,0,0)
 
     int del_length = 0;
     for(pii d : deletions) del_length += d.second-d.first;
-    assert(SIZE(c.directions) == SIZE(atom_friends) + del_length);
+    assert(c.directions.size() == atom_friends.size() + del_length);
 }
 
 ScoringData::~ScoringData() {

@@ -10,7 +10,7 @@ string HAtom::id_to_str(const int& id) {
 
 int HAtom::str_to_id(const string& str) {
     if (si_map.count(str) == 0) {
-        si_map[str] = SIZE(si_map);
+        si_map[str] = si_map.size();
         is_map[si_map[str]] = str;
     }
     return si_map[str];
@@ -30,7 +30,7 @@ HAtom::HAtom(int type, int id) :
 }
 
 void HAtom::add_id(int id) {
-    For(i, SIZE(ids)) {
+    For(i, ids.size()) {
         if (ids[i] == id) return;
         if (ids[i] > id) swap(ids[i], id);
     }

@@ -2,7 +2,7 @@
 #include"files.h"
 
 void GHistory::clean() {
-    if (SIZE(sequences)) {
+    if (sequences.size()) {
         this->types = sequences[0]->retype_atoms(0);
         for(auto t : types) delete t;
         types.clear();
@@ -41,10 +41,10 @@ void GHistory::generate_random(double time, int sequence_length) {
         if (nextseq->length() == 0) break;
     }
     this->types = sequences.back()->retype_atoms(Model::instance()->length_threshold);
-    assert(SIZE(events) == SIZE(sequences));
-    For(i, SIZE(events))
+    assert(events.size() == sequences.size());
+    For(i, events.size())
         events[i]->compute_atoms(i?events[i-1]:nullptr, i?sequences[i-1]:nullptr, sequences[i]);
-    for(int i = SIZE(events)-1; i>=0; --i)
+    for(int i = events.size()-1; i>=0; --i)
         events[i]->compute_atom_ids(sequences[i]);
 
     if (debuging) {
@@ -55,13 +55,13 @@ void GHistory::generate_random(double time, int sequence_length) {
         for(auto e : events) cout << *e;
         cout << endl;
         sequences.back()->write_atoms_short();
-        cout << SIZE(sequences) << " " << sequences.back()->atom_count() << " "
+        cout << sequences.size() << " " << sequences.back()->atom_count() << " "
             << sequences.back()->length() << endl;
     }
 }
 
 void GHistory::save_to_files(string basename, string id) {
-    if (SIZE(id)) basename += "-" + id;
+    if (id.size()) basename += "-" + id;
     ofstream f;
     cout << "Saving " << basename << endl;
 
@@ -86,7 +86,7 @@ void GHistory::save_to_files(string basename, string id) {
 }
 
 void GHistory::write_stats(ostream& os) {
-    os << "Number of events: " << SIZE(events) << endl;
+    os << "Number of events: " << events.size() << endl;
     int atc = 0;
     set<int> att;
     ForGAtom(atom, sequences.back()) {
@@ -96,7 +96,7 @@ void GHistory::write_stats(ostream& os) {
         }
     }
     os << "Number of atoms: " << atc << endl;
-    os << "Number of types: " << SIZE(att) << endl;
+    os << "Number of types: " << att.size() << endl;
     int dashes = 0;
     ForGAtom(atom, sequences.back()) {
         if (atom->get_id() == 0) os << "(";
@@ -117,17 +117,17 @@ void GHistory::write_stats(ostream& os) {
 }
 
 void GHistory::write_final_sequence(ostream& os, const string& sep) {
-    assert(SIZE(sequences));
+    assert(sequences.size());
     sequences.back()->write_dna(os, sep);
 }
 
 void GHistory::write_atoms(ostream& os) {
-    assert(SIZE(sequences));
+    assert(sequences.size());
     sequences.back()->write_atoms(os);
 }
 
 void GHistory::write_atoms_align(string basepath) {
-    assert(SIZE(sequences));
+    assert(sequences.size());
     map<int, fstream> files;
     remove_directory(basepath, "aln");
     create_directory(basepath);

@@ -16,8 +16,6 @@
 #include<tuple>
 using namespace std;
 
-#define SIZE(i) int(i.size())
-
 class GAtom;
 class GAtomType;
 class GEvent;

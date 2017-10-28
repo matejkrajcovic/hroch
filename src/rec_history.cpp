@@ -3,14 +3,14 @@
 void History::rec_parent(HEvent* event) {
     set<Candidate> cset = rec_candidates(event);
     vector<Candidate> cs(cset.begin(), cset.end());
-    if (SIZE(cs) == 0) return;
+    if (cs.size() == 0) return;
     vector<double> sum_scores = {0};
     for(auto c : cs) {
         double score = rec_score(c, event);
         sum_scores.push_back(sum_scores.back() + score);
     }
     double pick = random_double(0, sum_scores.back());
-    For(i, SIZE(cs)) if (pick < sum_scores[i+1]) {
+    For(i, cs.size()) if (pick < sum_scores[i+1]) {
         rec_compute_parent(cs[i], event);
         rec_merge_candidate(cs[i], event);
         return;
@@ -44,12 +44,12 @@ set<Candidate> History::rec_candidates(HEvent* event) {
 
     Dynamics d = Dynamics(this, event);
     d.compute_graph(1.2,0.5,0.05);
-    For(i, SIZE(event->atoms)) {
+    For(i, event->atoms.size()) {
         Candidate c = d.get_candidate();
         if (c.is_valid()) res.insert(c);
     }
     d.compute_graph(2.0,0.5,0.05);
-    For(i, (SIZE(event->atoms) * 3)) {
+    For(i, (event->atoms.size() * 3)) {
         Candidate c = d.get_candidate();
         if (c.is_valid()) res.insert(c);
     }
@@ -95,9 +95,9 @@ void History::proc_learn() {
             delete e;
             stats["candidates"] += 1;
         }
-        For(i, min(SIZE(good_values), SIZE(bad_values)))
+        For(i, min(good_values.size(), bad_values.size()))
             machine->train_data(good_values[i],1);
-        For(i, min(SIZE(good_values), SIZE(bad_values)))
+        For(i, min(good_values.size(), bad_values.size()))
             machine->train_data(bad_values[i],0);
 
 
@@ -124,7 +124,7 @@ void History::proc_learn() {
 
 void History::proc_reconstruct(int number) {
     // only linear reconstruction implemented
-    assert(SIZE(leaf_species)==1);
+    assert(leaf_species.size()==1);
     // find last event
     HEvent* current = events.begin()->second;
     for(auto e : events)
@@ -144,7 +144,7 @@ void History::proc_reconstruct(int number) {
             assert(strategy == KNOW_HOW);
             return;
         }
-        if (is_correct(true)) stats["max_events"] = SIZE(events)-1;
+        if (is_correct(true)) stats["max_events"] = events.size()-1;
         else if (number == EVAL_LAZY) return;
         while(current->parent != nullptr) {
             current = current->parent;
@@ -176,7 +176,7 @@ void History::real_reconstruct() {
 }
 
 void History::proc_test_candi(int strategy, string mark) {
-    assert(SIZE(leaf_species)==1);
+    assert(leaf_species.size()==1);
     HEvent* current = leaf_events.begin()->second;
     set_strategy(strategy);
 
@@ -187,7 +187,7 @@ void History::proc_test_candi(int strategy, string mark) {
 
     For(i, tot_cnt) {
         set<Candidate> cs = rec_candidates(current);
-        assert(SIZE(cs));
+        assert(cs.size());
         int best = 0;
         for(auto c : cs) {
             HEvent *e = rec_see_event(c,current);
@@ -196,7 +196,7 @@ void History::proc_test_candi(int strategy, string mark) {
         }
         ok_cnt += bool(best);
         oke_cnt += (best==SAME_LAST);
-        size_sum += SIZE(cs);
+        size_sum += cs.size();
     }
 
     stats["_size "+mark] = double(size_sum)/tot_cnt;
@@ -206,7 +206,7 @@ void History::proc_test_candi(int strategy, string mark) {
 
 
 void History::proc_test_score(int strategy, string mark) {
-    assert(SIZE(leaf_species)==1);
+    assert(leaf_species.size()==1);
     HEvent* current = leaf_events.begin()->second;
     Machine* machine = nullptr;
     if (strategy == SCORE_CL) machine = new MachineOne();
@@ -230,7 +230,7 @@ void History::proc_test_score(int strategy, string mark) {
         double max_score = 0.0;
         int is_max_good = 0;
         set<Candidate> cs = rec_candidates(current);
-        assert(SIZE(cs));
+        assert(cs.size());
 
         for(auto c : cs) {
             double score = rec_score(c,current);
@@ -250,8 +250,8 @@ void History::proc_test_score(int strategy, string mark) {
         }
         is_max_sum += is_max_good;
         sum_prob += ok_score / tot_score;
-        sum_cnt += ok_cnt / double(SIZE(cs));
-        size_sum += SIZE(cs);
+        sum_cnt += ok_cnt / double(cs.size());
+        size_sum += cs.size();
     }
     if (machine != nullptr) delete machine;
 

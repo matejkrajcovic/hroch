@@ -2,8 +2,8 @@
 
 string invert_dna(const string& str, bool really = true) {
     if (!really) return str;
-    string res = string(SIZE(str), 0);
-    For(i, SIZE(str)) res[i] = base_inv[int(str[SIZE(str)-1-i])];
+    string res = string(str.size(), 0);
+    For(i, str.size()) res[i] = base_inv[int(str[str.size()-1-i])];
     return res;
 }
 
@@ -55,12 +55,12 @@ void GAtom::mutate(double time) {
     for(auto& c : dna)
         if (c != '-')
             c = Model::instance()->get_mutated_base(c, time);
-    For(i, SIZE(dna))
+    For(i, dna.size())
         if (Model::instance()->get_indel_happened(time)) {
             do {
                 dna[i] = '-';
                 i++;
-            } while(i < SIZE(dna) && rand()%2 == 0);
+            } while(i < (int) dna.size() && rand()%2 == 0);
         }
 
 }

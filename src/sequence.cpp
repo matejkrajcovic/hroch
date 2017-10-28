@@ -66,7 +66,7 @@ set<GAtomType*> Sequence::retype_atoms(int length_threshold) {
             atom->set_name(name.substr(0,1) + to_string(++name_id));
             if (res.count(atom->get_type()) == 0) {
                 res.insert(atom->get_type());
-                atom->get_type()->id = SIZE(res);
+                atom->get_type()->id = res.size();
                 if (atom->is_inverted()) atom->get_type()->invert();
             }
         }

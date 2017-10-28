@@ -9,7 +9,7 @@
 Dynamics::Dynamics(History* history, HEvent* event) {
     this->event = event;
     for(auto a : event->atoms) atoms.push_back(a.type);
-    n = SIZE(atoms);
+    n = atoms.size();
     cherryness = vector<vvdo>(n+2, vvdo(n+2, vdo(8, 0.)));
     For(i, n) For(j, n) {
         if (i!=j && atoms[i]==atoms[j]) cherryness[i+1][j+1][BASE+LEV] =
@@ -73,13 +73,13 @@ void Dynamics::compute_graph(double dupm, double delm, double deli) {
     reverse(all_endpoints.begin(), all_endpoints.end());
     sum_endpoints = 0.;
     for(auto ep : all_endpoints) sum_endpoints += ep.first;
-    /*csum_ep = vector<double>(SIZE(all_endpoints)+1,0.);
-    For(i, SIZE(all_endpoints))
+    /*csum_ep = vector<double>(all_endpoints.size()+1,0.);
+    For(i, all_endpoints.size())
         csum_ep[i+1] = csum_ep[i]+all_endpoints[i].first;*/
 }
 
 Candidate Dynamics::get_candidate(bool maximal) {
-    assert(SIZE(all_endpoints));
+    assert(all_endpoints.size());
     const double multi[4][4] = {
         {0.,0.,0.,0.},
         {startp,dupm,dupm,dupm},
@@ -174,15 +174,15 @@ void compute_A0A1P1(const Candidate& C, const vector<HAtom>& atoms,
     int ob = min(C.e1+1,max(C.e2+1,C.b2));
     int oc = max(C.b1+1,min(C.b2+1,C.e2));
     int od = max(C.e1+1,max(C.e2+1,C.b2));
-    int oe = SIZE(atoms);
+    int oe = atoms.size();
     int ooam = oa+(oc-ob)*C.is1_right();
-    int doom = oa+oc+SIZE(merged[0])-ob;
+    int doom = oa+oc+merged[0].size()-ob;
     int x1 = C.is1_left()?1:2;
     for(auto& d : deletions) {
         //cout << d.first << " " << d.second << endl;
         if (d.second < 0) {
             d.second *= -1;
-            d.first = (SIZE(merged[0]) - abs(d.first) - d.second)*sign(d.first);
+            d.first = (merged[0].size() - abs(d.first) - d.second)*sign(d.first);
         }
         d.first = ((d.first<0)?doom-d.first:oa+d.first);
         d.second = d.first + d.second;
@@ -191,28 +191,28 @@ void compute_A0A1P1(const Candidate& C, const vector<HAtom>& atoms,
 
     // first part
     A0.clear(), A1.clear();
-    For(i, oa) P1.push_back(SIZE(A0)+i);
+    For(i, oa) P1.push_back(A0.size()+i);
     A0.insert(A0.end(), atoms.begin(), atoms.begin()+oa);
     A1.insert(A1.end(), atoms.begin(), atoms.begin()+oa);
 
     // merge1
     if (C.is1_left()) A0.insert(A0.end(), merged[0].begin(), merged[0].end());
-    if (C.is1_left() || !C.is_inv()) For(i, SIZE(merged[0])) P1.push_back(ooam+i);
-    else For(i, SIZE(merged[0])) P1.push_back(ooam+SIZE(merged[0])-1-i);
+    if (C.is1_left() || !C.is_inv()) For(i, merged[0].size()) P1.push_back(ooam+i);
+    else For(i, merged[0].size()) P1.push_back(ooam+merged[0].size()-1-i);
     A1.insert(A1.end(), merged[x1].begin(), merged[x1].end());
 
-    For(i, oc-ob) P1.push_back(SIZE(A0)+i);
+    For(i, oc-ob) P1.push_back(A0.size()+i);
     A0.insert(A0.end(), atoms.begin()+ob, atoms.begin()+oc);
     A1.insert(A1.end(), atoms.begin()+ob, atoms.begin()+oc);
 
     // merge2
     if (C.is1_right()) A0.insert(A0.end(), merged[0].begin(), merged[0].end());
-    if (C.is1_right() || !C.is_inv()) For(i, SIZE(merged[0])) P1.push_back(ooam+i);
-    else For(i, SIZE(merged[0])) P1.push_back(ooam+SIZE(merged[0])-1-i);
+    if (C.is1_right() || !C.is_inv()) For(i, merged[0].size()) P1.push_back(ooam+i);
+    else For(i, merged[0].size()) P1.push_back(ooam+merged[0].size()-1-i);
     A1.insert(A1.end(), merged[3-x1].begin(), merged[3-x1].end());
 
     // last part
-    For(i, oe-od) P1.push_back(SIZE(A0)+i);
+    For(i, oe-od) P1.push_back(A0.size()+i);
     A0.insert(A0.end(), atoms.begin()+od, atoms.begin()+oe);
     A1.insert(A1.end(), atoms.begin()+od, atoms.begin()+oe);
 } // }}}
@@ -225,7 +225,7 @@ HEvent* compute_next_AP(const pii& deletion, const string& species, const string
     event->atom_parents = P;
     A.clear();
     P.clear();
-    For(i, SIZE(event->atoms)) if (i<deletion.first || i>=deletion.second) {
+    For(i, event->atoms.size()) if (i<deletion.first || i>=deletion.second) {
         A.push_back(event->atoms[i]);
         P.push_back(i);
     }
