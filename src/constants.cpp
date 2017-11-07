@@ -1,5 +1,11 @@
-#include"constants.h"
+#include <iostream>
 #include <iomanip>
+
+#include "constants.h"
+#include "random.h"
+#include "utils.h"
+
+using namespace std;
 
 string datapath("data/");
 

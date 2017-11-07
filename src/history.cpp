@@ -1,4 +1,10 @@
-#include"history.h"
+#include <fstream>
+#include <cassert>
+#include <cmath>
+
+#include "history.h"
+
+using namespace std;
 
 void open_check(ifstream &f, string filename) {
     f.open(filename, fstream::in);

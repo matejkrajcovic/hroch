@@ -1,4 +1,8 @@
-#include"gatom.h"
+#include "gatom.h"
+#include "constants.h"
+#include "random.h"
+#include "utils.h"
+using namespace std;
 
 string invert_dna(const string& str, bool really = true) {
     if (!really) return str;

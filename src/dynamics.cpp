@@ -1,4 +1,11 @@
-#include"dynamics.h"
+#include <cassert>
+
+#include "dynamics.h"
+#include "constants.h"
+#include "random.h"
+#include "score.h"
+
+using namespace std;
 
 #define BASE 0
 #define BASEI 4

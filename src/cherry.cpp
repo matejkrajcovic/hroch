@@ -1,4 +1,10 @@
-#include"cherry.h"
+#include <fstream>
+#include <cmath>
+#include <cassert>
+
+#include "cherry.h"
+
+using namespace std;
 
 bool CherryTree::has_cherry(const HAtom& a, const HAtom& b) {
     int x = id[a], y = id[b];

@@ -3,17 +3,21 @@
 #ifndef DYNAMICS_H
 #define DYNAMICS_H
 
-#include"constants.h"
+#include <vector>
+#include <utility>
+#include <tuple>
 
+#include "history.h"
+#include "hevent.h"
 
 class Dynamics {
     const double startp = 1.0;
     History* history;
     HEvent* event;
-    vector<int> atoms;
-    vector<vector<vector<double>>> cherryness;
-    vector<vector<vector<double>>> mass;
-    vector<pair<double, tuple<int, int, int>>> all_endpoints;
+    std::vector<int> atoms;
+    std::vector<std::vector<std::vector<double>>> cherryness;
+    std::vector<std::vector<std::vector<double>>> mass;
+    std::vector<std::pair<double, std::tuple<int, int, int>>> all_endpoints;
     //vector<double> csum_ep;
     double sum_endpoints;
     double dupm, delm, deli, deli3;

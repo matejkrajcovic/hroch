@@ -1,5 +1,10 @@
-#include"ghistory.h"
-#include"files.h"
+#include <fstream>
+#include <cassert>
+
+#include "ghistory.h"
+#include "files.h"
+
+using namespace std;
 
 void GHistory::clean() {
     if (sequences.size()) {

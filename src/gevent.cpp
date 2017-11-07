@@ -1,4 +1,5 @@
-#include"gevent.h"
+#include "gevent.h"
+using namespace std;
 
 double GEvent::get_time(double time_start) {
     return time_start + time_interval;

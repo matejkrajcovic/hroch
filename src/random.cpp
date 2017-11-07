@@ -1,6 +1,8 @@
-#include<random>
-#include"random.h"
-#include<unistd.h>
+#include <unistd.h>
+
+#include "random.h"
+
+using namespace std;
 
 default_random_engine generator;
 uniform_real_distribution<double> ur_distribution;

@@ -1,4 +1,9 @@
-#include"score.h"
+#include <cmath>
+#include <cassert>
+
+#include "score.h"
+
+using namespace std;
 
 typedef double (*scoring_function) (ScoringData* sd);
 

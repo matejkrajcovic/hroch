@@ -4,36 +4,41 @@
 #ifndef CHERRY_H
 #define CHERRY_H
 
-#include"constants.h"
+#include <map>
+#include <vector>
+#include <string>
+
+#include "hatom.h"
+#include "history.h"
+#include "constants.h"
+
+class History;
 
 class CherryTree {
-    map<HAtom, int> id;
-    vector<vi> edges;
+    std::map<HAtom, int> id;
+    std::vector<vi> edges;
     int atype;
 public:
     double probability;
     bool has_cherry(const HAtom& a, const HAtom& b);
     void merge(const HAtom& a, const HAtom& b);
-    int parse(map<string,int>& ids, const string& word, int from, int to);
+    int parse(std::map<std::string, int>& ids, const std::string& word, int from, int to);
 
     CherryTree(const CherryTree& ct);
-    CherryTree(double probability, int atype, map<string, int>& ids, const string& word);
+    CherryTree(double probability, int atype, std::map<std::string,int>& ids, const std::string& word);
 };
 
 class CherryForest {
-    map<int, vector<CherryTree>> trees;
-    map<int, int> sizes;
-    map<int, double> bias;
+    std::map<int, std::vector<CherryTree>> trees;
+    std::map<int, int> sizes;
+    std::map<int, double> bias;
 public:
     double cherryness(const HAtom& a, const HAtom& b);
     void merge(const HAtom& a, const HAtom& b);
 
-    void read_atom(History* history, int type, string filename);
+    void read_atom(History* history, int type, std::string filename);
     CherryForest();
     CherryForest(CherryForest* original);
 };
-
-
-
 
 #endif

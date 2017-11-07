@@ -3,7 +3,13 @@
 #ifndef ATOM_H
 #define ATOM_H
 
-#include"constants.h"
+#include <string>
+#include <vector>
+#include <iostream>
+#include <ostream>
+#include <algorithm>
+
+class GAtom;
 
 class GAtomType {
     static int type_cnt;
@@ -19,21 +25,21 @@ public:
 
 class GAtom {
     GAtomType* type;
-    vector<GAtom*> children;
-    string dna;
-    string name;
+    std::vector<GAtom*> children;
+    std::string dna;
+    std::string name;
     bool inverted;
 public:
     GAtom *parent, *next;
 
     int length() { return dna.size(); }
-    int com_length() { return dna.size() - count(dna.begin(), dna.end(), '-'); }
+    int com_length() { return dna.size() - std::count(dna.begin(), dna.end(), '-'); }
     GAtomType* get_type() { return type; }
     int get_id() { return inverted?-type->id:type->id; }
-    const string& get_dna() { return dna; }
+    const std::string& get_dna() { return dna; }
     bool is_inverted() { return inverted; }
-    string get_name() { return name; }
-    void set_name(const string& str) { name = str; }
+    std::string get_name() { return name; }
+    void set_name(const std::string& str) { name = str; }
 
     bool change_parent(GAtom* new_parent); // return if changed
     void unlink_parent() { change_parent(nullptr); }
@@ -43,11 +49,12 @@ public:
     void split(int position, GAtom* first_parent, GAtom* second_parent);
     GAtom* duplicate();
     GAtom(int length = 0);
-    GAtom(GAtom* parent, const string& dna);
+    GAtom(GAtom* parent, const std::string& dna);
 
-    void write_dna(ostream& os = cout, const string& sep = " ", bool compact = false);
-    void write_type(ostream& os = cout, const string& sep = " ");
+    void write_dna(std::ostream& os = std::cout, const std::string& sep = " ", bool compact = false);
+    void write_type(std::ostream& os = std::cout, const std::string& sep = " ");
 };
-ostream& operator<<(ostream& os, GAtom& atom);
+
+std::ostream& operator<<(std::ostream& os, GAtom& atom);
 
 #endif

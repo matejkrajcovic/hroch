@@ -1,4 +1,11 @@
-#include"history.h"
+#include <cassert>
+
+#include "history.h"
+#include "random.h"
+#include "dynamics.h"
+#include "score.h"
+
+using namespace std;
 
 void History::rec_parent(HEvent* event) {
     set<Candidate> cset = rec_candidates(event);

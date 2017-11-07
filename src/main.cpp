@@ -1,4 +1,13 @@
-#include"constants.h"
+#include <string>
+#include <vector>
+#include <map>
+#include <fstream>
+#include <cassert>
+
+#include "ghistory.h"
+#include "constants.h"
+
+using namespace std;
 
 void generate_history(double time, string id) {
     GHistory* history = new GHistory();

@@ -1,4 +1,12 @@
-#include"machine.h"
+#include <string>
+#include <fstream>
+#include <cmath>
+#include <cassert>
+
+#include "machine.h"
+#include "score.h"
+
+using namespace std;
 
 double MachineBachelor::predict(const vector<double>& values) {
     double sum =

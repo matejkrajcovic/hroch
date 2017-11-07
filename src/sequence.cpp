@@ -1,4 +1,6 @@
-#include"sequence.h"
+#include "sequence.h"
+#include "utils.h"
+using namespace std;
 
 Sequence::Sequence(double age, int length) {
     this->name = "unicorn";

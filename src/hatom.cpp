@@ -1,4 +1,10 @@
-#include"hatom.h"
+#include <cassert>
+#include <algorithm>
+
+#include "hatom.h"
+#include "utils.h"
+
+using namespace std;
 
 map<string, int> HAtom::si_map;
 map<int, string> HAtom::is_map;

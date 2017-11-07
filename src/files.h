@@ -1,11 +1,9 @@
 #ifndef FILES_H
 #define FILES_H
 
-#include<iostream>
-#include<cstring>
-using namespace std;
+#include <string>
 
-void create_directory(string path);
-void remove_directory(string path, string ext_inside);
+void create_directory(std::string path);
+void remove_directory(std::string path, std::string ext_inside);
 
 #endif

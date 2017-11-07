@@ -1,7 +1,14 @@
 #ifndef SCORE_H
 #define SCORE_H
 
-#include"constants.h"
+#include <vector>
+#include <set>
+#include <utility>
+
+#include "history.h"
+#include "hevent.h"
+#include "candidate.h"
+#include "constants.h"
 
 #define SC_SEQ_LEN 0
 #define SC_SEQ_NUM_TYPES 1
@@ -24,23 +31,24 @@
 #define SC_PROD_CHERRY 14
 #define SC_LEN_CHERRY 15
 
-vector<double> all_scores(History* h, const Candidate& c, HEvent* e);
+class HEvent;
+
+std::vector<double> all_scores(History* h, const Candidate& c, HEvent* e);
 
 class ScoringData {
 public:
     History* history;
     HEvent *first_event, *last_event;
     Candidate c;
-    vector<pii> deletions;
-    vector<pair<HAtom,HAtom>> atom_friends;
-    set<pii> prev_bp, post_bp;
-    set<pii> prev_sp, post_sp;
+    std::vector<pii> deletions;
+    std::vector<std::pair<HAtom, HAtom>> atom_friends;
+    std::set<pii> prev_bp, post_bp;
+    std::set<pii> prev_sp, post_sp;
     int prev_bpc, post_bpc, num_types;
     //map<int,int> prev_leftnum, prev_rightnum, post_lefnum, post_rightnum;
 
     ScoringData(History* h, const Candidate& c, HEvent* e);
     ~ScoringData();
 };
-
 
 #endif

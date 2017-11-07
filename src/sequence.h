@@ -3,13 +3,19 @@
 #ifndef SEQUENCE_H
 #define SEQUENCE_H
 
-#include"constants.h"
+#include <vector>
+#include <set>
+#include <string>
+#include <iostream>
+#include <ostream>
+
+#include "gatom.h"
 
 class Sequence {
 public:
     GAtom* first;
     double age;
-    string name;
+    std::string name;
 
     Sequence(double age = 0.0, int length = 0);
     Sequence(Sequence* parent);
@@ -18,14 +24,14 @@ public:
     int com_length();
     int atom_count();
     void mutate(double time);
-    void split_breakpoints(vector<int> positions);
+    void split_breakpoints(std::vector<int> positions);
 
-    set<GAtomType*> retype_atoms(int length_threshold = 0);
-    void write_dna(ostream& os = cout, const string& sep = "\n");
-    void write_atoms_short(ostream& os = cout, const string& sep = "\n");
-    void write_atoms(ostream& os = cout);
+    std::set<GAtomType*> retype_atoms(int length_threshold = 0);
+    void write_dna(std::ostream& os = std::cout, const std::string& sep = "\n");
+    void write_atoms_short(std::ostream& os = std::cout, const std::string& sep = "\n");
+    void write_atoms(std::ostream& os = std::cout);
 };
 
-ostream& operator<<(ostream& os, const Sequence& sequence);
+std::ostream& operator<<(std::ostream& os, const Sequence& sequence);
 
 #endif

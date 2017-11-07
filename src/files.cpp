@@ -1,6 +1,11 @@
-#include"files.h"
-#include<sys/stat.h>
-#include<cstdlib>
+#include <sys/stat.h>
+#include <cstdlib>
+#include <iostream>
+#include <cstring>
+
+#include "files.h"
+
+using namespace std;
 
 void create_directory(string path) {
     mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);

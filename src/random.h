@@ -3,8 +3,10 @@
 #ifndef RANDOM_H
 #define RANDOM_H
 
-#include<random>
-#include"constants.h"
+#include <random>
+
+#include "gevent.h"
+#include "constants.h"
 
 void random_init();
 double random_double(); // random from interval [0.0, 1.0)
@@ -13,9 +15,9 @@ int random_int(int from, int to); // random integer from interval [from, to)
 
 class Model {
 private:
-    geometric_distribution<int> length_distribution;
-    geometric_distribution<int> distance_distribution;
-    exponential_distribution<double> time_distribution;
+    std::geometric_distribution<int> length_distribution;
+    std::geometric_distribution<int> distance_distribution;
+    std::exponential_distribution<double> time_distribution;
 
     const double prob_del = 0.05;
     const double prob_inv = 0.3902;
