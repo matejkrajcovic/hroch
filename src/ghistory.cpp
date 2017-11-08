@@ -6,6 +6,10 @@
 
 using namespace std;
 
+GHistory::~GHistory() {
+    clean();
+}
+
 void GHistory::clean() {
     if (sequences.size()) {
         this->types = sequences[0]->retype_atoms(0);

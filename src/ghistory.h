@@ -19,6 +19,7 @@ class GHistory {
 public:
     std::vector<HEvent*> events;
 
+    ~GHistory();
     void clean();
     void generate_random(double time, int sequence_length);
     void save_to_files(std::string basename, std::string id = "");

@@ -10,10 +10,9 @@
 using namespace std;
 
 void generate_history(double time, string id) {
-    GHistory* history = new GHistory();
-    history->generate_random(time, 100000);
-    history->save_to_files(datapath + "generated", id);
-    delete history;
+    GHistory history;
+    history.generate_random(time, 100000);
+    history.save_to_files(datapath + "generated", id);
 }
 
 void generate_test() {
