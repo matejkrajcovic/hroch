@@ -26,8 +26,6 @@ extern int do_cheeryness;
 extern int strict_compare;
 extern int num_bases;
 extern char bases[];
-extern int base_id[256];
-extern char base_inv[256];
 extern double epsilon;
 
 void setup_constants();

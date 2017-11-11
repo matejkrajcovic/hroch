@@ -15,8 +15,6 @@ string TEST_CASE = "F4";
 
 int num_bases = 4;
 char bases[] = {'A', 'C', 'G', 'T'};
-int base_id[256];
-char base_inv[256];
 int debuging = 0;
 int stats = 0;
 int do_cheeryness = 1;
@@ -27,10 +25,6 @@ double epsilon = 1e-10;
 
 void setup_constants() {
     random_init();
-    For(i, num_bases) {
-        base_id[(int)bases[i]] = i;
-        base_inv[(int)bases[i]] = bases[num_bases-1-i];
-    }
     cout << fixed << setprecision(6);
 }
 

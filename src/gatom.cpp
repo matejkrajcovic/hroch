@@ -2,12 +2,24 @@
 #include "constants.h"
 #include "random.h"
 #include "utils.h"
+#include <stdexcept>
 using namespace std;
 
 string invert_dna(const string& str, bool really = true) {
     if (!really) return str;
     string res = string(str.size(), 0);
-    For(i, str.size()) res[i] = base_inv[int(str[str.size()-1-i])];
+    for (string::size_type i = 0; i < str.size(); ++i) {
+        char new_base;
+        switch (str[i]) {
+            case 'A': new_base = 'T'; break;
+            case 'T': new_base = 'A'; break;
+            case 'C': new_base = 'G'; break;
+            case 'G': new_base = 'C'; break;
+            case '-': new_base = '-'; break;
+            default: throw runtime_error("Unknown base, expected A, T, C, G or -");
+        }
+        res[str.size()-i-1] = new_base;
+    }
     return res;
 }
 
