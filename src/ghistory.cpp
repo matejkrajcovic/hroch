@@ -83,7 +83,13 @@ void GHistory::save_to_files(string basename, string id) {
     f.open(basename+".atoms", fstream::out);
     write_atoms(f);
     f.close();
-    write_atoms_align(basename+"/");
+
+    string basename_dir = basename + "/";
+    remove_directory(basename_dir, "aln");
+    create_directory(basename_dir);
+    write_atoms_align(basename_dir);
+    write_atoms_align_nexus(basename_dir);
+
     f.open(basename+".nhistory", fstream::out);
     write_events(f);
     f.close();
@@ -138,8 +144,6 @@ void GHistory::write_atoms(ostream& os) {
 void GHistory::write_atoms_align(string basepath) {
     assert(sequences.size());
     map<int, fstream> files;
-    remove_directory(basepath, "aln");
-    create_directory(basepath);
     for(const auto& type : types)
         files[type->id].open(basepath+to_string(type->id)+".aln", fstream::out);
     ForGAtom(atom, sequences.back()) {
@@ -154,6 +158,38 @@ void GHistory::write_atoms_align(string basepath) {
         }
     }
     for(auto& f : files) f.second.close();
+}
+
+// Nexus format is used as input to MrBayes and its syntax is described here:
+// http://mrbayes.sourceforge.net/wiki/index.php/Tutorial#Getting_Data_into_MrBayes
+void GHistory::write_atoms_align_nexus(string basepath) {
+    assert(sequences.size());
+    map<int, vector<GAtom*>> atoms_to_write;
+
+    ForGAtom(atom, sequences.back()) {
+        int typeId = atom->get_type()->id;
+        if (typeId) {
+            atoms_to_write[typeId].push_back(atom);
+        }
+    }
+
+    for (const auto& [typeId, atoms] : atoms_to_write) {
+        fstream file;
+        file.open(basepath + to_string(typeId) + ".nex", fstream::out);
+
+        file << "#NEXUS" << endl << "begin data;" << endl;
+        file << "  dimensions ntax=" << atoms.size() << " nchar="
+            << atoms[0]->length() << ";" << endl;
+        file << "  format datatype=dna interleave=no gap=-;" << endl;
+        file << "  matrix" << endl;
+
+        for (auto atom : atoms) {
+            file << "  " << atom->get_name() << " " << atom->get_dna() << endl;
+        }
+
+        file << "  ;" << endl << "end;" << endl;
+        file.close();
+    }
 }
 
 void GHistory::write_events(ostream& os) {

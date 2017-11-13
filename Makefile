@@ -14,7 +14,7 @@ OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 # compiler and flags
 
 CXX=g++
-CXXFLAGS=-std=gnu++11 -O2 -static
+CXXFLAGS=-std=c++17 -O2 -static
 RM=rm
 WFLAGS=-Wall -Wextra -Wno-unused-result
 #-g -pg -static
