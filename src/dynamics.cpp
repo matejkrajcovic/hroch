@@ -230,11 +230,12 @@ HEvent* compute_next_AP(const pii& deletion, const string& species, const string
     event->parent = parent;
     event->atoms = A;
     event->atom_parents = P;
+    vector<int>& original_P(P);
     A.clear();
     P.clear();
     For(i, event->atoms.size()) if (i<deletion.first || i>=deletion.second) {
         A.push_back(event->atoms[i]);
-        P.push_back(i);
+        P.push_back(original_P[i]);
     }
     return event;
 }
