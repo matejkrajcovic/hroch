@@ -56,7 +56,7 @@ void GHistory::generate_random(double time, int sequence_length) {
     for(int i = events.size()-1; i>=0; --i)
         events[i]->compute_atom_ids(sequences[i]);
 
-    if (debuging) {
+    if (debugging) {
         for(auto s : sequences) cout << *s;
         cout << endl;
         for(auto s : sequences) s->write_atoms_short();

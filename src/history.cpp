@@ -29,7 +29,7 @@ History::History(string atoms_file, string trees_dir, int strategy) {
     f.close();
 
     cherry_forest = nullptr;
-    if (do_cheeryness) {
+    if (do_cherryness) {
         read_cherryness(trees_dir + "/");
     }
 
@@ -64,7 +64,7 @@ History::History(string basename, string id) {
     read_events(f);
     f.close();
     cherry_forest = nullptr;
-    if (do_cheeryness) {
+    if (do_cherryness) {
         for(string species : {"unicorn"}) {
             read_cherryness(datapath + "dupstemp_data-generated-" + id + "-" + species + "-dna/");
         }
@@ -88,7 +88,7 @@ History::History(History* original) {
         events[e->name] = e;
         leaf_events[e->species] = e;
     }
-    if (do_cheeryness)
+    if (do_cherryness)
         this->cherry_forest = new CherryForest(original->cherry_forest);
 }
 
@@ -205,7 +205,7 @@ void History::write_stats(ostream& os) {
     string species = leaf_species[0];
     os << species << " " << leaf_atoms[species].size() << " atoms ";
     os << original->events.size() << " events; time: " << original->get_time();
-    os << " (dc" << do_cheeryness << ")" << endl;
+    os << " (dc" << do_cherryness << ")" << endl;
     original->nth_from_end(1)->test_stats(this, os);
 
     for(auto sp : stats) {

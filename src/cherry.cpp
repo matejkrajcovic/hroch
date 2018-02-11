@@ -93,7 +93,7 @@ void CherryForest::read_atom(History* history, int type, string filename) {
     for(auto la : history->leaf_atoms) for (auto atom : la.second)
         sizes[type] += (atom.atype() == type);
     if (sizes[type] < 4) return;
-    if (debuging)
+    if (debugging)
         cout << "reading starts " << type << " " << filename << " " << sizes[type] << endl;
     ifstream file (filename, fstream::in);
     if (!file.is_open()) {

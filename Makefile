@@ -12,16 +12,21 @@ INCLUDES= $(wildcard $(SRCDIR)/*.h)
 OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 
 # compiler and flags
-
 CXX=g++
-CXXFLAGS=-std=c++17 -O2 -static
-RM=rm
+CXXFLAGS=-std=c++17 -static
+RM=rm -f
 WFLAGS=-Wall -Wextra -Wno-unused-result
-#-g -pg -static
 
 # commands
+all: release
 
-all: obj $(BINDIR)/$(TARGET) outputs stats
+build: obj $(BINDIR)/$(TARGET) outputs stats
+
+release: CXXFLAGS+=-O2
+release: build
+
+debug: CXXFLAGS+=-O0 -g
+debug: build
 
 $(BINDIR)/$(TARGET): $(OBJECTS)
 	$(CXX) -o $@ $(WFLAGS) $(OBJECTS)

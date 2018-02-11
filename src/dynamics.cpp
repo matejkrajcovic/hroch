@@ -248,20 +248,20 @@ void History::rec_compute_parent(const Candidate& C, HEvent* event) {
     compute_A0A1P1(C, event->atoms, A0,A,P, deletions);
     sort(deletions.begin(), deletions.end(), greater<pii>());
 
-    HEvent* current = new HEvent(event->species, gen_event_name(), "");
-    current->atoms = A0;
+    HEvent* parent = new HEvent(event->species, gen_event_name(), "");
+    parent->atoms = A0;
     for(auto d : deletions) {
-        current = compute_next_AP(d, event->species, gen_event_name(),
-                                  current, A, P);
-        current->type = (current->parent->type=="")?(C.is_inv()?"dupi":"dup"):"del";
+        parent = compute_next_AP(d, event->species, gen_event_name(),
+                                 parent, A, P);
+        parent->type = (parent->parent->type=="")?(C.is_inv()?"dupi":"dup"):"del";
     }
 
     assert(event->atoms == A);
     event->atom_parents = P;
-    event->parent = current;
+    event->parent = parent;
     event->type = (event->parent->type=="")?(C.is_inv()?"dupi":"dup"):"del";
 
-    current = event;
+    HEvent* current = event;
     while(current->parent != nullptr) {
         current->parent->compute_atom_ids(current);
         current = current->parent;

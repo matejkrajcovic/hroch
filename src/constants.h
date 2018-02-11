@@ -19,9 +19,9 @@ extern int UPPER_RANGE;
 extern std::string TEST_CASE;
 
 extern int error_happened;
-extern int debuging;
+extern int debugging;
 extern int stats;
-extern int do_cheeryness;
+extern int do_cherryness;
 #define SPECIAL_TRAINING 47
 extern int strict_compare;
 extern int num_bases;

@@ -176,7 +176,7 @@ void reconstruct_one(History* h0, string hid, int strategy) {
 
 void reconstruct_many(string hid) {
     History* h0 = new History(datapath + "generated", hid);
-    if (debuging) {
+    if (debugging) {
         for(auto ev : h0->events) ev.second->test_stats(h0, cout);
         for(auto ev : h0->events) ev.second->write_detailed(cout);
     }
