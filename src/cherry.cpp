@@ -13,6 +13,11 @@ bool CherryTree::has_cherry(const HAtom& a, const HAtom& b) {
 
 void CherryTree::merge(const HAtom& a, const HAtom& b) {
     int x = id[a], y = id[b];
+    if (x == y) { // merging with itself
+        // NOTE: maybe this condition is not a complete solution to segfaults
+        // but it works for now
+        return;
+    }
     int z = edges[x][0];
     auto it = find(edges[z].begin(), edges[z].end(), x);
     edges[z].erase(it);
