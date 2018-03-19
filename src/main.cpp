@@ -210,6 +210,7 @@ void reconstruct(string atoms_file, string trees_dir, int count, int strategy) {
     if (strategy == SCORE_BAC_NC) machine = new MachineBachelor();
     if (strategy == SCORE_BAC) machine = new MachineBachelor();
     if (strategy == SCORE_LR) machine = new MachineLinear();
+    if (strategy == SCORE_LRS) machine = new MachineLinearStrict();
     if (machine != nullptr) machine->load();
 
     int shortest = 123456789;
@@ -276,30 +277,27 @@ void help(string name) {
 
 
 int main(int argc, char **argv) {
-    setup_constants();
-    auto args = parse_arguments(argc, argv);
-    cout << "HROCH: Heuristic reconstrucion of cluster histories." << endl;
-    if (args.count("--help")) {
-        help(argv[0]);
-        return 0;
+    auto mode = parse_arguments(argc, argv);
+    switch (mode) {
+        case operation_mode::gen_all:
+            generate_all(); break;
+        case operation_mode::gen_test:
+            generate_test(); break;
+        case operation_mode::train:
+            train(); break;
+        case operation_mode::test_s:
+            test_candi(); break;
+        case operation_mode::test_c:
+            test_score(); break;
+        case operation_mode::rec:
+            for(int i = LOWER_RANGE; i<UPPER_RANGE; ++i) {
+                reconstruct_many(TEST_CASE+to_string(i));
+            }
+            break;
+        case operation_mode::solve:
+            reconstruct(atoms_file, trees_dir, reconstructions_count, strategy);
+            break;
     }
-    if (args.count("--gen-test")) generate_test();
-    if (args.count("--gen-all")) generate_all();
-    if (args.count("--train")) train();
-    if (args.count("--test-c")) test_candi();
-    if (args.count("--test-s")) test_score();
-    if (args.count("--rec")) {
-        for(int i = LOWER_RANGE; i<UPPER_RANGE; ++i)
-            reconstruct_many(TEST_CASE+to_string(i));
-    }
-    if (args.count("--solve")) {
-        assert(argc >= 5);
-        int strategy = SCORE_LR;
-        if (argc > 5) strategy = stoi(string(argv[5]));
-        int count = stoi(string(argv[4]));
-        string atoms_file = argv[2];
-        string trees_dir = argv[3];
-        reconstruct(atoms_file, trees_dir, count, strategy);
-    }
+
     cout << "Done." << endl;
 }

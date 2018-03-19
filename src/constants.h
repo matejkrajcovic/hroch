@@ -28,7 +28,21 @@ extern int num_bases;
 extern char bases[];
 extern double epsilon;
 
-void setup_constants();
-std::set<std::string> parse_arguments(int argc, char **argv);
+extern int strategy;
+extern int reconstructions_count;
+extern std::string atoms_file;
+extern std::string trees_dir;
+
+enum class operation_mode {
+  solve,
+  gen_all,
+  gen_test,
+  train,
+  test_c,
+  test_s,
+  rec,
+};
+
+operation_mode parse_arguments(int argc, char **argv);
 
 #endif

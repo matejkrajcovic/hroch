@@ -4,6 +4,8 @@
 #include "constants.h"
 #include "random.h"
 #include "utils.h"
+#include "history.h"
+#include "../lib/cxxopts.hpp"
 
 using namespace std;
 
@@ -23,22 +25,97 @@ int fail_on_error = 1;
 int error_happened = 0;
 double epsilon = 1e-10;
 
-void setup_constants() {
+int strategy;
+int reconstructions_count = -1;
+string atoms_file = "";
+string trees_dir = "";
+
+operation_mode parse_arguments(int argc, char **argv) {
     random_init();
     cout << fixed << setprecision(6);
-}
 
-set<string> parse_arguments(int argc, char **argv) {
-    do_cherryness = 1;
-    set<string> res;
-    For(i, argc) {
-        string arg = argv[i];
-        if (arg == "--stats" || arg == "-s") stats = 1;
-        if (arg == "--debug" || arg == "-d") debugging = 1;
-        if (arg == "--no-cherry") do_cherryness = 0;
-        if (arg == "--strict") strict_compare = 1;
-        if (arg == "--special-strict") strict_compare = SPECIAL_TRAINING;
-        res.insert(arg);
+    try {
+        cxxopts::Options options(argv[0], "HROCH: Heuristic reconstruction of cluster histories.");
+        options.add_options()
+            ("help", "")
+            ("s,stats", "")
+            ("d,debug", "")
+            ("no-cherry", "")
+            ("strict", "")
+            ("special-strict", "")
+            ;
+
+        options.add_options("Modes of operation")
+            ("solve", "")
+            ("gen-all", "generate test and train data")
+            ("gen-test", "generate test data")
+            ("train", "produce lr-train file")
+            ("test-c", "make statistics of candidate proposal algorithms")
+            ("test-s", "make statistics of scoring algorithms")
+            ("rec", "make statistics of history reconstruction algorithms")
+            ;
+
+        options.add_options("Solve")
+            ("atoms_file", "atom file", cxxopts::value<string>())
+            ("trees_dir", "trees directory", cxxopts::value<string>())
+            ("count", "count of reconstructed histories", cxxopts::value<int>(), "N")
+            ("strategy", "reconstruction strategy", cxxopts::value<int>()->default_value(to_string(SCORE_LR)))
+            ;
+
+        auto results = options.parse(argc, argv);
+
+        if (results.count("stats")) {
+            stats = 1;
+        }
+        if (results.count("debug")) {
+            debugging = 1;
+        }
+        if (results.count("no-cherry")) {
+            do_cherryness = 0;
+        }
+        if (results.count("strict")) {
+            strict_compare = 1;
+        }
+        if (results.count("special-strict")) {
+            strict_compare = SPECIAL_TRAINING;
+        }
+
+        if (results.count("atoms_file")) {
+            atoms_file = results["atoms_file"].as<string>();
+        }
+        if (results.count("trees_dir")) {
+            trees_dir = results["trees_dir"].as<string>();
+        }
+        if (results.count("count")) {
+            reconstructions_count = results["count"].as<int>();
+        }
+        strategy = results["strategy"].as<int>();
+
+        if (results.count("help")) {
+            cout << options.help({"", "Modes of operation", "Solve"}) << endl;
+            exit(0);
+        } else if (results.count("solve")) {
+            if (atoms_file.empty() || trees_dir.empty() || reconstructions_count < 0) {
+                cout << "Missing arguments: atoms_file, trees_dir or count." << endl;
+                exit(0);
+            }
+            return operation_mode::solve;
+        } else if (results.count("gen-all")) {
+            return operation_mode::gen_all;
+        } else if (results.count("gen-test")) {
+            return operation_mode::gen_test;
+        } else if (results.count("train")) {
+            return operation_mode::train;
+        } else if (results.count("test-c")) {
+            return operation_mode::test_c;
+        } else if (results.count("test-s")) {
+            return operation_mode::test_s;
+        } else {
+            cout << "no mode of operation, see help" << endl;
+            exit(1);
+        }
+    } catch (const cxxopts::OptionException& e) {
+        cout << "error parsing options: " << e.what() << endl;
+        exit(1);
     }
-    return res;
 }
