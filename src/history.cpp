@@ -346,3 +346,16 @@ void History::set_strategy(int strategy, Machine* machine) {
     this->strategy = strategy;
     this->machine = machine;
 }
+
+int History::get_history_score() {
+    int score = 0;
+    for (auto e : events) {
+        auto type = e.second->type;
+        if (type == "dup" || type == "dupi") {
+            score += 1;
+        } else if (type == "del") {
+            score += 2;
+        }
+    }
+    return score;
+}

@@ -72,6 +72,8 @@ public:
     std::set<Candidate> rec_candidates(HEvent* event);
     double rec_score(const Candidate& c, HEvent* event);
 
+    int get_history_score();
+
     HEvent* nth_from_end(int n);
     HEvent* resolve_deletion(HEvent* deletion);
     int is_original(HEvent* event, bool strict = false);

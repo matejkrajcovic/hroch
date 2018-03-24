@@ -30,6 +30,10 @@ int reconstructions_count = -1;
 string atoms_file = "";
 string trees_dir = "";
 
+bool no_annealing;
+double starting_temperature;
+int annealing_steps;
+
 operation_mode parse_arguments(int argc, char **argv) {
     random_init();
     cout << fixed << setprecision(6);
@@ -62,6 +66,12 @@ operation_mode parse_arguments(int argc, char **argv) {
             ("strategy", "reconstruction strategy", cxxopts::value<int>()->default_value(to_string(SCORE_LR)))
             ;
 
+        options.add_options("Simulated annealing")
+            ("no_annealing", "Disable simulated annealing", cxxopts::value<bool>()->default_value("false"))
+            ("starting_temperature", "Starting temperature", cxxopts::value<double>()->default_value("0.2"))
+            ("annealing_steps", "Annealing steps", cxxopts::value<int>()->default_value("10"))
+            ;
+
         auto results = options.parse(argc, argv);
 
         if (results.count("stats")) {
@@ -90,6 +100,10 @@ operation_mode parse_arguments(int argc, char **argv) {
             reconstructions_count = results["count"].as<int>();
         }
         strategy = results["strategy"].as<int>();
+
+        no_annealing = results["no_annealing"].as<bool>();
+        starting_temperature = results["starting_temperature"].as<double>();
+        annealing_steps = results["annealing_steps"].as<int>();
 
         if (results.count("help")) {
             cout << options.help({"", "Modes of operation", "Solve"}) << endl;

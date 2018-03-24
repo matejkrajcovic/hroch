@@ -33,6 +33,10 @@ extern int reconstructions_count;
 extern std::string atoms_file;
 extern std::string trees_dir;
 
+extern bool no_annealing;
+extern double starting_temperature;
+extern int annealing_steps;
+
 enum class operation_mode {
   solve,
   gen_all,

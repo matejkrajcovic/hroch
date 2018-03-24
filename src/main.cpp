@@ -3,9 +3,12 @@
 #include <map>
 #include <fstream>
 #include <cassert>
+#include <cmath>
+#include <limits>
 
 #include "ghistory.h"
 #include "constants.h"
+#include "random.h"
 
 using namespace std;
 
@@ -199,6 +202,19 @@ void reconstruct_many(string hid) {
     delete h0;
 }
 
+// linear annealing schedule
+double get_temperature_linear(int step, int max_steps) {
+    double ratio = (double) step / max_steps;
+    return starting_temperature * (1 - ratio);
+}
+
+bool pick_new_history(int score_prev, int score_current, double temperature) {
+    if (score_current < score_prev) {
+        return true;
+    }
+    return (temperature / (score_current - score_prev)) > random_double();
+}
+
 void reconstruct(string atoms_file, string trees_dir, int count, int strategy) {
     string outputfile_name = "hroch_" + atoms_file;
     for(auto& c : outputfile_name) if (c=='/') c = '-';
@@ -217,10 +233,32 @@ void reconstruct(string atoms_file, string trees_dir, int count, int strategy) {
     vector<History*> hists;
     vector<int> lengths(1000, 0);
 
+    History* h0 = new History(atoms_file, trees_dir, strategy);
     For(i, count) {
-        History* h = new History(atoms_file, trees_dir, strategy);
-        h->set_strategy(strategy, machine);
-        h->real_reconstruct();
+        History* h;
+        if (no_annealing) {
+            h = new History(h0);
+            h->set_strategy(strategy, machine);
+            h->real_reconstruct();
+        } else {
+            int score_prev = numeric_limits<int>::max();
+            for (int i = 0; i < annealing_steps; i++) {
+                double temperature = get_temperature_linear(i, annealing_steps);
+
+                History* h_current = new History(h0);
+                h_current->set_strategy(strategy, machine);
+                h_current->real_reconstruct();
+                int score_current = h_current->get_history_score();
+
+                if (pick_new_history(score_prev, score_current, temperature) || !h) {
+                    h = h_current;
+                    score_prev = score_current;
+                } else {
+                    delete h_current;
+                }
+            }
+        }
+
         int num_events = h->events.size();
         lengths[num_events]++;
         if (num_events < shortest) {
