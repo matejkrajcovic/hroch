@@ -32,6 +32,7 @@ extern int strategy;
 extern int reconstructions_count;
 extern std::string atoms_file;
 extern std::string trees_dir;
+extern std::string output_file_suffix;
 
 extern bool no_annealing;
 extern double starting_temperature;

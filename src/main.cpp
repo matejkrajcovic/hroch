@@ -216,7 +216,7 @@ bool pick_new_history(int score_prev, int score_current, double temperature) {
 }
 
 void reconstruct(string atoms_file, string trees_dir, int count, int strategy) {
-    string outputfile_name = "hroch_" + atoms_file;
+    string outputfile_name = "hroch_" + atoms_file + output_file_suffix;
     for(auto& c : outputfile_name) if (c=='/') c = '-';
     outputfile_name = "outputs/"+outputfile_name+".histories";
     ofstream ofile(outputfile_name, fstream::out);

@@ -29,6 +29,7 @@ int strategy;
 int reconstructions_count = -1;
 string atoms_file = "";
 string trees_dir = "";
+string output_file_suffix = "";
 
 bool no_annealing;
 double starting_temperature;
@@ -65,6 +66,7 @@ operation_mode parse_arguments(int argc, char **argv) {
             ("trees_dir", "trees directory", cxxopts::value<string>())
             ("count", "count of reconstructed histories", cxxopts::value<int>(), "N")
             ("strategy", "reconstruction strategy", cxxopts::value<int>()->default_value(to_string(SCORE_LR)))
+            ("output_file_suffix", "", cxxopts::value<string>()->default_value(""))
             ;
 
         options.add_options("Simulated annealing")
@@ -102,6 +104,7 @@ operation_mode parse_arguments(int argc, char **argv) {
             reconstructions_count = results["count"].as<int>();
         }
         strategy = results["strategy"].as<int>();
+        output_file_suffix = results["output_file_suffix"].as<string>();
 
         no_annealing = results["no_annealing"].as<bool>();
         starting_temperature = results["starting_temperature"].as<double>();
