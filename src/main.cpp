@@ -257,6 +257,7 @@ void reconstruct(string atoms_file, string trees_dir, int count, int strategy) {
                     delete h_current;
                 }
             }
+            machine->reset_used_duplications();
         }
 
         int num_events = h->events.size();

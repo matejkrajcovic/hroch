@@ -2,16 +2,25 @@
 #define MACHINE_H
 
 #include <vector>
+#include <set>
 
+#include "candidate.h"
 #include "utils.h"
 
+class HEvent;
+
 class Machine {
+    std::set<size_t> used_duplications_now;
+    std::set<size_t> used_duplications_prev;
 public:
     virtual void train_data(const std::vector<double>& values, double result) = 0;
     virtual void save() {;}
     virtual void load() {;}
     virtual double predict(const std::vector<double>& values) = 0;
     virtual ~Machine() {};
+    void add_used_duplication(const Candidate& c, HEvent* event);
+    bool was_duplication_used(const Candidate& c, HEvent* event);
+    void reset_used_duplications();
 };
 
 class MachineOne: public Machine {

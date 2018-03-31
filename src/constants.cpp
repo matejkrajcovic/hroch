@@ -33,6 +33,7 @@ string trees_dir = "";
 bool no_annealing;
 double starting_temperature;
 int annealing_steps;
+double prob_previously_used_event;
 
 operation_mode parse_arguments(int argc, char **argv) {
     random_init();
@@ -70,6 +71,7 @@ operation_mode parse_arguments(int argc, char **argv) {
             ("no_annealing", "Disable simulated annealing", cxxopts::value<bool>()->default_value("false"))
             ("starting_temperature", "Starting temperature", cxxopts::value<double>()->default_value("0.2"))
             ("annealing_steps", "Annealing steps", cxxopts::value<int>()->default_value("10"))
+            ("prob_previously_used_event", "Minimum probability of using an event from previous reconstruction", cxxopts::value<double>()->default_value("0"))
             ;
 
         auto results = options.parse(argc, argv);
@@ -104,9 +106,10 @@ operation_mode parse_arguments(int argc, char **argv) {
         no_annealing = results["no_annealing"].as<bool>();
         starting_temperature = results["starting_temperature"].as<double>();
         annealing_steps = results["annealing_steps"].as<int>();
+        prob_previously_used_event = results["prob_previously_used_event"].as<double>();
 
         if (results.count("help")) {
-            cout << options.help({"", "Modes of operation", "Solve"}) << endl;
+            cout << options.help({"", "Modes of operation", "Solve", "Simulated annealing"}) << endl;
             exit(0);
         } else if (results.count("solve")) {
             if (atoms_file.empty() || trees_dir.empty() || reconstructions_count < 0) {

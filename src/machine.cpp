@@ -2,6 +2,8 @@
 #include <fstream>
 #include <cmath>
 #include <cassert>
+#include <boost/functional/hash.hpp>
+#include <utility>
 
 #include "machine.h"
 #include "score.h"
@@ -63,4 +65,28 @@ double MachineLinear::predict(const vector<double>& values) {
     For(i, values.size()) res += values[i]*coef[i];
     //return pow(1./(1.+exp(-res)),4);
     return 1./(1.+exp(-res));
+}
+
+size_t calculate_duplication_hash(const Candidate &c, HEvent* event) {
+    vector<int> atoms;
+    for (auto atom : event->atoms) {
+        atoms.push_back(atom.type);
+    }
+
+    return boost::hash_value(make_pair(atoms, c.is_inv()));
+}
+
+void Machine::add_used_duplication(const Candidate& c, HEvent* event) {
+    auto hash = calculate_duplication_hash(c, event);
+    used_duplications_now.insert(hash);
+}
+
+bool Machine::was_duplication_used(const Candidate& c, HEvent* event) {
+    auto hash = calculate_duplication_hash(c, event);
+    return used_duplications_prev.find(hash) != used_duplications_prev.end();
+}
+
+void Machine::reset_used_duplications() {
+    used_duplications_prev.swap(used_duplications_now);
+    used_duplications_now.clear();
 }

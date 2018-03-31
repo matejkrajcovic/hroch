@@ -11,15 +11,52 @@ void History::rec_parent(HEvent* event) {
     set<Candidate> cset = rec_candidates(event);
     vector<Candidate> cs(cset.begin(), cset.end());
     if (cs.size() == 0) return;
+    vector<double> scores;
     vector<double> sum_scores = {0};
-    for(auto c : cs) {
-        double score = rec_score(c, event);
+
+    if (prob_previously_used_event != 0) {
+        vector<bool> already_used;
+        double used_scores_sum = 0;
+        double unused_scores_sum = 0;
+        for (auto c : cs) {
+            double score = rec_score(c, event);
+            scores.push_back(score);
+            bool is_already_used = machine->was_duplication_used(c, event);
+            already_used.push_back(is_already_used);
+            if (is_already_used) {
+                used_scores_sum += score;
+            } else {
+                unused_scores_sum += score;
+            }
+        }
+
+        double current_ratio = (used_scores_sum) / (used_scores_sum + unused_scores_sum);
+        double desired_ratio = prob_previously_used_event;
+        if (current_ratio < desired_ratio) {
+            double increase_ratio = desired_ratio / current_ratio;
+
+            for (size_t i = 0; i < scores.size(); i++) {
+                if (already_used[i]) {
+                    scores[i] *= increase_ratio;
+                }
+            }
+        }
+    } else {
+        for (auto c : cs) {
+            double score = rec_score(c, event);
+            scores.push_back(score);
+        }
+    }
+
+    for (auto score : scores) {
         sum_scores.push_back(sum_scores.back() + score);
     }
+
     double pick = random_double(0, sum_scores.back());
     For(i, cs.size()) if (pick < sum_scores[i+1]) {
         rec_compute_parent(cs[i], event);
         rec_merge_candidate(cs[i], event);
+        machine->add_used_duplication(cs[i], event);
         return;
     }
 }
@@ -180,6 +217,8 @@ void History::real_reconstruct() {
             current->event_time = now_time -= 0.01;
         }
     }
+
+    machine->reset_used_duplications();
 }
 
 void History::proc_test_candi(int strategy, string mark) {

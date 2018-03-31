@@ -36,6 +36,7 @@ extern std::string trees_dir;
 extern bool no_annealing;
 extern double starting_temperature;
 extern int annealing_steps;
+extern double prob_previously_used_event;
 
 enum class operation_mode {
   solve,
