@@ -1,7 +1,0 @@
-predok  e1 root 0.0    root 1 2 3           # -1 -1 -1 
-predok  e2 e1   0.006 dupi 1 2 3 -3 -2 -1  # 0 1 2 2 1 0
-clovek  e3 e2   0.01  sp   1 2 3 -3 -2 -1  # 0 1 2 3 4 5 
-clovek  e4 e3   0.012 del  1 2 3 -3 -1     # 0 1 2 3 5
-clovek  e5 e4   0.015 leaf 1 2 3 -3 -1     # 0 1 2 3 4
-simpanz e6 e2   0.01  sp   1 2 3 -3 -2 -1  # 0 1 2 3 4 5 
-simpanz e7 e6   0.016 leaf 1 2 3 -3 -2 -1  # 0 1 2 3 4 5
