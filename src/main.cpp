@@ -234,12 +234,17 @@ void reconstruct(string atoms_file, string trees_dir, int count, int strategy) {
     vector<int> lengths(1000, 0);
 
     History* h0 = new History(atoms_file, trees_dir, strategy);
-    For(i, count) {
+    int successful_reconstructions = 0;
+    while (successful_reconstructions < count) {
         History* h;
         if (no_annealing) {
             h = new History(h0);
             h->set_strategy(strategy, machine);
-            h->real_reconstruct();
+            if (h->real_reconstruct()) {
+                successful_reconstructions++;
+            } else {
+                continue;
+            }
         } else {
             int score_prev = numeric_limits<int>::max();
             for (int i = 0; i < annealing_steps; i++) {
@@ -247,10 +252,10 @@ void reconstruct(string atoms_file, string trees_dir, int count, int strategy) {
 
                 History* h_current = new History(h0);
                 h_current->set_strategy(strategy, machine);
-                h_current->real_reconstruct();
+                int successful_reconstruction = h_current->real_reconstruct();
                 int score_current = h_current->get_history_score();
 
-                if (pick_new_history(score_prev, score_current, temperature) || !h) {
+                if (successful_reconstruction && (pick_new_history(score_prev, score_current, temperature) || !h)) {
                     h = h_current;
                     score_prev = score_current;
                 } else {
@@ -258,6 +263,9 @@ void reconstruct(string atoms_file, string trees_dir, int count, int strategy) {
                 }
             }
             machine->reset_used_duplications();
+            if (h) {
+                successful_reconstructions++;
+            }
         }
 
         int num_events = h->events.size();

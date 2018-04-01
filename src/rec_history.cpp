@@ -198,7 +198,7 @@ void History::proc_reconstruct(int number) {
     }
 }
 
-void History::real_reconstruct() {
+bool History::real_reconstruct() {
     HEvent* current = events.begin()->second;
     double now_time = current->event_time;
     current = new HEvent(current->species, gen_event_name(), "", current);
@@ -208,8 +208,9 @@ void History::real_reconstruct() {
     while(!current->is_final()) {
         rec_parent(current);
         if (current->parent == nullptr) {
-            cout << "Unsuccessfull reconstruction" << endl;
-            exit(1);
+            // TODO: This should never happen. You can always remove duplicated atoms, even one by one.
+            cout << "Unsuccessful reconstruction" << endl;
+            return false;
         }
         while(current->parent != nullptr) {
             current = current->parent;
@@ -219,6 +220,7 @@ void History::real_reconstruct() {
     }
 
     machine->reset_used_duplications();
+    return true;
 }
 
 void History::proc_test_candi(int strategy, string mark) {

@@ -61,7 +61,7 @@ public:
 
     void proc_learn();
     void proc_reconstruct(int number = EVAL_INF);
-    void real_reconstruct();
+    bool real_reconstruct();
     void proc_test_candi(int strategy, std::string mark);
     void proc_test_score(int strategy, std::string mark);
     void rec_parent(HEvent* event);
