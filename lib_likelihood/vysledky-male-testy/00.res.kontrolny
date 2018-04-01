@@ -1,0 +1,114 @@
+hg18 e000 root 0 root 1 2 3 4 5 6 7 8 9 10
+hg18 e001 e000 0.0150818 dupi 3 2
+hg18 e002 e001 0.0244754 dupi 8 7
+hg18 e003 e002 0.0271268 dupi 6 7
+hg18 e004 e003 0.04 leaf
+orig lik: -99.98976244
+full: -99.98976244
+0 lik po zmene: -99.39867572
+1 lik po zmene: -99.39867572
+2 lik po zmene: -99.39867572
+3 lik po zmene: -98.18014239
+4 lik po zmene: -98.18014239
+5 lik po zmene: -98.18014239
+6 lik po zmene: -98.18014239
+7 lik po zmene: -98.18014239
+8 lik po zmene: -98.18014239
+9 lik po zmene: -97.51753145
+10 lik po zmene: -97.51753145
+11 lik po zmene: -97.51753145
+12 lik po zmene: -97.51753145
+13 lik po zmene: -97.51753145
+14 lik po zmene: -96.7550576
+15 lik po zmene: -96.7550576
+16 lik po zmene: -96.7550576
+17 lik po zmene: -96.7550576
+18 lik po zmene: -96.7550576
+19 lik po zmene: -96.68850997
+20 lik po zmene: -96.68850997
+21 lik po zmene: -96.68850997
+22 lik po zmene: -96.68850997
+23 lik po zmene: -96.68850997
+24 lik po zmene: -96.68850997
+25 lik po zmene: -96.68850997
+26 lik po zmene: -96.68850997
+27 lik po zmene: -96.68850997
+28 lik po zmene: -96.68850997
+29 lik po zmene: -96.68850997
+30 lik po zmene: -96.68850997
+31 lik po zmene: -96.56525929
+32 lik po zmene: -96.56525929
+33 lik po zmene: -96.56525929
+34 lik po zmene: -96.56525929
+35 lik po zmene: -96.56525929
+36 lik po zmene: -96.56525929
+37 lik po zmene: -96.54477092
+38 lik po zmene: -96.54477092
+39 lik po zmene: -96.54477092
+40 lik po zmene: -96.54477092
+41 lik po zmene: -96.54477092
+42 lik po zmene: -96.54477092
+43 lik po zmene: -96.54477092
+44 lik po zmene: -96.5379441
+45 lik po zmene: -96.5379441
+46 lik po zmene: -96.5379441
+47 lik po zmene: -96.5379441
+48 lik po zmene: -96.5379441
+49 lik po zmene: -96.5379441
+50 lik po zmene: -96.5379441
+51 lik po zmene: -96.5327086
+52 lik po zmene: -96.5327086
+53 lik po zmene: -96.52397796
+54 lik po zmene: -96.52397796
+55 lik po zmene: -96.52397796
+56 lik po zmene: -96.51731126
+57 lik po zmene: -96.51731126
+58 lik po zmene: -96.51731126
+59 lik po zmene: -96.51398885
+60 lik po zmene: -96.51398885
+61 lik po zmene: -96.51398885
+62 lik po zmene: -96.51398885
+63 lik po zmene: -96.51398885
+64 lik po zmene: -96.51398885
+65 lik po zmene: -96.51386987
+66 lik po zmene: -96.51386987
+67 lik po zmene: -96.51386987
+68 lik po zmene: -96.51385855
+69 lik po zmene: -96.51385855
+70 lik po zmene: -96.51356232
+71 lik po zmene: -96.51356232
+72 lik po zmene: -96.51356232
+73 lik po zmene: -96.51356232
+74 lik po zmene: -96.51356232
+75 lik po zmene: -96.51356232
+76 lik po zmene: -96.51356232
+77 lik po zmene: -96.51356232
+78 lik po zmene: -96.51356232
+79 lik po zmene: -96.51356232
+80 lik po zmene: -96.51356232
+81 lik po zmene: -96.51356232
+82 lik po zmene: -96.5134471
+83 lik po zmene: -96.5134471
+84 lik po zmene: -96.5134471
+85 lik po zmene: -96.5134471
+86 lik po zmene: -96.5134471
+87 lik po zmene: -96.5134471
+88 lik po zmene: -96.5134471
+89 lik po zmene: -96.5134471
+90 lik po zmene: -96.5134471
+91 lik po zmene: -96.5134471
+92 lik po zmene: -96.51342076
+93 lik po zmene: -96.51342076
+94 lik po zmene: -96.51342076
+95 lik po zmene: -96.51342076
+96 lik po zmene: -96.51341462
+97 lik po zmene: -96.51341462
+98 lik po zmene: -96.51341462
+99 lik po zmene: -96.51341462
+hg18 e000 root 0 root 1 2 3 4 5 6 7 8 9 10
+hg18 e001 e000 0.0150818 dupi 3 2
+hg18 e002 e001 0.03999987669 dupi 8 7
+hg18 e003 e002 0.03999987669 dupi 6 7
+hg18 e004 e003 0.04 leaf
+povodna likelihood bola: -99.98976244
+lik po vsetkych zmenach: -96.51341462

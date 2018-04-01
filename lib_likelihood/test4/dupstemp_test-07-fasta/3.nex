@@ -1,0 +1,22 @@
+#NEXUS
+begin data;
+dimensions ntax=4 nchar=54;
+format datatype=dna gap=- interleave=yes;
+matrix
+8	CATCGTACCGTCACGCTGATTTGATGGCCTTCACTGTCAGGCAGTACATC
+aux_8	CATCGTACCGTCACGCTGATTTGATGGCCTTCACTGTCAGGCAGTACATC
+3	CAGCGTACCGTCACGCTGATTTGGTGGCCTTCACTGTCAGGCAGTACATC
+aux_3	CAGCGTACCGTCACGCTGATTTGGTGGCCTTCACTGTCAGGCAGTACATC
+
+8	TTGG
+aux_8	TTGG
+3	TTGG
+aux_3	TTGG
+
+;
+end;
+begin mrbayes;
+set autoclose=yes nowarn=yes;
+lset nst=2;
+mcmc nruns=1 ngen=10000 samplefreq=10;
+end;

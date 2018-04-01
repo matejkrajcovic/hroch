@@ -1,0 +1,194 @@
+
+
+                            MrBayes v3.2.2 x64
+
+                      (Bayesian Analysis of Phylogeny)
+
+              Distributed under the GNU General Public License
+
+
+               Type "help" or "help <command>" for information
+                     on the commands that are available.
+
+                   Type "about" for authorship and general
+                       information about the program.
+
+
+
+   Executing file "2.nex"
+   UNIX line termination
+   Longest line length = 57
+   Parsing file
+   Expecting NEXUS formatted file
+   Reading data block
+      Allocated taxon set
+      Allocated matrix
+      Defining new matrix with 4 taxa and 229 characters
+      Data is Dna
+      Gaps coded as -
+      Data matrix is interleaved
+      Taxon 1 -> 2
+      Taxon 2 -> aux_2
+      Taxon 3 -> 5
+      Taxon 4 -> aux_5
+      Successfully read matrix
+      Setting default partition (does not divide up characters)
+      Setting model defaults
+      Seed (for generating default start values) = 1401436186
+      Setting output file names to "2.nex.run<i>.<p|t>"
+   Exiting data block
+   Reading mrbayes block
+      Setting autoclose to yes
+      Setting nowarnings to yes
+      Setting Nst to 2
+      Successfully set likelihood model parameters
+      Setting number of runs to 1
+      Setting number of generations to 10000
+      Setting sample frequency to 10
+      Setting chain output file names to "2.nex.<p/t>"
+      Running Markov chain
+      MCMC stamp = 1185295611
+      Seed = 1441160912
+      Swapseed = 1401436186
+      Model settings:
+
+         Data not partitioned --
+            Datatype  = DNA
+            Nucmodel  = 4by4
+            Nst       = 2
+                        Transition and transversion  rates, expressed
+                        as proportions of the rate sum, have a
+                        Beta(1.00,1.00) prior
+            Covarion  = No
+            # States  = 4
+                        State frequencies have a Dirichlet prior
+                        (1.00,1.00,1.00,1.00)
+            Rates     = Equal
+
+      Active parameters: 
+
+         Parameters
+         ------------------
+         Tratio           1
+         Statefreq        2
+         Ratemultiplier   3
+         Topology         4
+         Brlens           5
+         ------------------
+
+         1 --  Parameter  = Tratio
+               Type       = Transition and transversion rates
+               Prior      = Beta(1.00,1.00)
+
+         2 --  Parameter  = Pi
+               Type       = Stationary state frequencies
+               Prior      = Dirichlet
+
+         3 --  Parameter  = Ratemultiplier
+               Type       = Partition-specific rate multiplier
+               Prior      = Fixed(1.0)
+
+         4 --  Parameter  = Tau
+               Type       = Topology
+               Prior      = All topologies equally probable a priori
+               Subparam.  = V
+
+         5 --  Parameter  = V
+               Type       = Branch lengths
+               Prior      = Unconstrained:Exponential(10.0)
+
+
+
+      The MCMC sampler will use the following moves:
+         With prob.  Chain will use move
+            2.94 %   Dirichlet(Tratio)
+            1.47 %   Dirichlet(Pi)
+            1.47 %   Slider(Pi)
+           14.71 %   NNI(Tau,V)
+           14.71 %   ParsSPR(Tau,V)
+           44.12 %   Multiplier(V)
+           14.71 %   Nodeslider(V)
+            5.88 %   TLMultiplier(V)
+
+      Division 1 has 4 unique site patterns
+      Initializing conditional likelihoods
+      Using standard SSE likelihood calculator for division 1 (single-precision)
+
+      Initial log likelihoods and log prior probs:
+         Chain 1 -- -429.953941 -- 7.206073
+         Chain 2 -- -429.953941 -- 7.206073
+         Chain 3 -- -429.953941 -- 7.206073
+         Chain 4 -- -429.953941 -- 7.206073
+
+
+      Chain results (10000 generations requested):
+
+          0 -- [-429.954] (-429.954) (-429.954) (-429.954) 
+        500 -- (-324.432) [-321.344] (-327.379) (-321.157) -- 0:00:00
+       1000 -- (-324.959) (-321.463) (-323.594) [-320.548] -- 0:00:00
+       1500 -- (-327.805) (-323.923) (-322.110) [-320.644] -- 0:00:00
+       2000 -- (-321.336) (-320.184) (-324.324) [-318.752] -- 0:00:00
+       2500 -- (-319.533) [-320.986] (-322.084) (-325.534) -- 0:00:00
+       3000 -- (-325.344) [-323.301] (-321.430) (-319.369) -- 0:00:00
+       3500 -- (-322.696) (-327.526) (-323.140) [-322.640] -- 0:00:00
+       4000 -- (-319.317) (-323.480) (-318.132) [-319.625] -- 0:00:00
+       4500 -- (-323.071) [-329.949] (-322.224) (-324.700) -- 0:00:00
+       5000 -- [-321.369] (-322.208) (-323.434) (-323.800) -- 0:00:00
+       5500 -- [-321.227] (-323.014) (-319.684) (-320.321) -- 0:00:00
+       6000 -- (-321.371) (-323.723) [-323.337] (-325.891) -- 0:00:00
+       6500 -- (-322.974) (-326.326) (-326.883) [-325.470] -- 0:00:00
+       7000 -- (-326.127) [-324.574] (-321.806) (-322.244) -- 0:00:00
+       7500 -- [-321.149] (-325.868) (-318.591) (-322.829) -- 0:00:00
+       8000 -- (-326.473) [-321.954] (-320.356) (-328.256) -- 0:00:00
+       8500 -- [-323.924] (-326.090) (-330.151) (-326.141) -- 0:00:00
+       9000 -- (-325.711) (-324.548) (-323.892) [-320.249] -- 0:00:00
+       9500 -- (-327.381) (-321.470) (-323.113) [-321.476] -- 0:00:00
+      10000 -- (-319.184) (-325.551) (-318.942) [-326.175] -- 0:00:00
+
+      Analysis completed in less than 1 second
+      Analysis used 0.11 seconds of CPU time
+      Log likelihood of best state for "cold" chain was -317.08
+
+      Acceptance rates for the moves in the "cold" chain:
+         With prob.   (last 100)   chain accepted proposals by move
+            88.4 %     ( 89 %)     Dirichlet(Tratio)
+            53.0 %     ( 56 %)     Dirichlet(Pi)
+            61.8 %     ( 60 %)     Slider(Pi)
+           100.0 %     (100 %)     NNI(Tau,V)
+            74.4 %     ( 71 %)     ParsSPR(Tau,V)
+            84.3 %     ( 79 %)     Multiplier(V)
+            97.1 %     ( 99 %)     Nodeslider(V)
+            71.9 %     ( 71 %)     TLMultiplier(V)
+
+      Chain swap information:
+
+                 1     2     3     4 
+           --------------------------
+         1 |        0.87  0.74  0.66 
+         2 |  1696        0.88  0.79 
+         3 |  1693  1692        0.88 
+         4 |  1610  1668  1641       
+
+      Upper diagonal: Proportion of successful state exchanges between chains
+      Lower diagonal: Number of attempted state exchanges between chains
+
+      Chain information:
+
+        ID -- Heat 
+       -----------
+         1 -- 1.00  (cold chain)
+         2 -- 0.91 
+         3 -- 0.83 
+         4 -- 0.77 
+
+      Heat = 1 / (1 + T * (ID - 1))
+         (where T = 0.10 is the temperature and ID is the chain number)
+
+   Exiting mrbayes block
+   Reached end of file
+
+   Tasks completed, exiting program because mode is noninteractive
+   To return control to the command line after completion of file processing, 
+   set mode to interactive with 'mb -i <filename>' (i is for interactive)
+   or use 'set mode=interactive'
+

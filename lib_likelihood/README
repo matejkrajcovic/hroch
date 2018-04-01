@@ -1,0 +1,2 @@
+Na kompilovanie treba pouzit prikaz make
+Na spustenie treba spustit prikaz ./pramoduhis def x 0 kde x je cislo testu z rosahu 00 az 09
