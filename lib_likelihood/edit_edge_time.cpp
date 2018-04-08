@@ -23,7 +23,7 @@ void HistoryLikelihood::edit_edge_lengths() {
     for(auto e : events) {
         if(e.second == edit || e.second->parent == edit) max_time += e.second->edge_time;
     }
-    cerr << "picked event: " << edit->name << " " << max_time << endl;
+    //cerr << "picked event: " << edit->name << " " << max_time << endl;
     //upravujem tuto udalost
     find_better_time(edit, max_time);
 }
@@ -57,9 +57,9 @@ double find_max(Function* f, Function* fd, Function* fdd, double max_time) {
 void HistoryLikelihood::find_better_time(Event* edit, double max_time) {
     Number old_likelihood = likelihood_all();
     //poratam funkcnu likelihood pre kazdy genovy strom
-    cerr << "ratam funkcnu likelihood" << endl;
+    //cerr << "ratam funkcnu likelihood" << endl;
     Function f = Function(1.0);
-    f.print();
+    //f.print();
     for(auto tree : group_trees) {
         Function pom = tree.second->function_likelihood(edit, max_time);
         f = f * pom;
@@ -67,24 +67,24 @@ void HistoryLikelihood::find_better_time(Event* edit, double max_time) {
     Function fd = f.derivate();
     Function fdd = fd.derivate();
     //zisti ako vyzera likelihood eventov
-    cerr << "likelihood eventov" << endl;
+    //cerr << "likelihood eventov" << endl;
     int happened=1,not_happend=0;
     for(auto e : events)
         if(e.second->parent == edit && e.second->parent->type == "leaf") not_happend++;
         else if(e.second->parent == edit) happened++;
     //najdi vhodny cas - maximum funkcie f
-    cerr << "Newton-Rapson" << endl;
+    //cerr << "Newton-Rapson" << endl;
     double better_time = find_max(&f, &fd, &fdd, max_time);
-    cerr << "better time: " << better_time << endl;
+    //cerr << "better time: " << better_time << endl;
     //nastav cas eventu na toto
     double new_event_time = 0;
     for(auto e : events) {
         if(e.second->parent == edit) new_event_time = e.second->event_time;
     }
     double cas_zaloha = edit->event_time;
-    fprintf(stderr,"stary cas: %lf\n",edit->event_time);
+    //fprintf(stderr,"stary cas: %lf\n",edit->event_time);
     new_event_time -= better_time;
-    fprintf(stderr,"novy cas: %lf\n",new_event_time);
+    //fprintf(stderr,"novy cas: %lf\n",new_event_time);
     edit->event_time = new_event_time;
     build_trees();
     Number new_likelihood = likelihood_all();

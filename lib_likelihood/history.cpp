@@ -203,7 +203,7 @@ void HistoryLikelihood::build_trees(){
             e->ev_len = sum-parentsum;
             e->ev_dist = minsum - maxsum;
         }
-        cerr << e->name << e->type << " " << e->sequence_length << " " << e->ev_len << " " << e->ev_dist << endl;
+        //cerr << e->name << e->type << " " << e->sequence_length << " " << e->ev_len << " " << e->ev_dist << endl;
     }
 
     kn_trees = true;
@@ -220,7 +220,7 @@ Number HistoryLikelihood::likelihood_all(){
             //x.print(stderr);
             total *= x;
         }
-        fprintf(stderr, ".. zatial: "); total.print(stderr);
+        //fprintf(stderr, ".. zatial: "); total.print(stderr);
     }
     // zrataj likelihood eventov
     for (auto e : events){

@@ -38,24 +38,24 @@ double calculate_reconstruction_likelihood(string atoms_filename, string align_d
     h->read_events(reconstruction_stream);
 
     h->build_trees();
-    h->write_events(cout);
-    Number lik = h->likelihood_all();
+    //h->write_events(cout);
+    //Number lik = h->likelihood_all();
     int old_felsenstein_on = h->felsenstein_on;
     h->felsenstein_on = 1;
-    Number fulllik = h->likelihood_all();
+    //Number fulllik = h->likelihood_all();
     h->felsenstein_on = old_felsenstein_on;
 
-    cout << "orig lik: " << lik.data << endl;
-    cout << "full: " << fulllik.data << endl;
+    //cout << "orig lik: " << lik.data << endl;
+    //cout << "full: " << fulllik.data << endl;
 
     For(i,100) {
         h->edit_edge_lengths();
-        Number lik2 = h->likelihood_all();
-        cout << i << " lik po zmene: " << lik2.data << endl;
+        //Number lik2 = h->likelihood_all();
+        //cout << i << " lik po zmene: " << lik2.data << endl;
     }
     Number lik2 = h->likelihood_all();
-    cout << "povodna likelihood bola: " << lik.data << endl;
-    cout << "lik po vsetkych zmenach: " << lik2.data << endl;
+    //cout << "povodna likelihood bola: " << lik.data << endl;
+    //cout << "lik po vsetkych zmenach: " << lik2.data << endl;
     h->clear_events();
 
     return lik2.data;
