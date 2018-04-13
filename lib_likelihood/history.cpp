@@ -40,23 +40,19 @@ void HistoryLikelihood::read_atom_lists(istream& is){
 
 void HistoryLikelihood::read_atom_alignments(istream& is, int group_id){
     string name, word, line;
-    is.get();
-    while(is >> name){
-        word = "";
-        while(is.peek() != '>'){
-            if (is.peek()<'A') {
-                if (is.get()>0) continue;
-                else break;
-            }
-            is >> line;
-            word+=line;
-        }
-        is.get();
 
-        atom_string[name] = word;
-        atom_id[name] = group_id;
-        group_atoms[group_id].push_back(name);
+    while (is >> line) {
+        if (line[0] == '>') {
+            name = line.substr(1);
+
+            atom_string[name] = "";
+            atom_id[name] = group_id;
+            group_atoms[group_id].push_back(name);
+        } else {
+            atom_string[name] += line;
+        }
     }
+
     kn_alignments++;
 }
 
