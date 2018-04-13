@@ -72,7 +72,8 @@ public:
     std::set<Candidate> rec_candidates(HEvent* event);
     double rec_score(const Candidate& c, HEvent* event);
 
-    int get_history_score();
+    double get_history_score_num_events();
+    double get_history_score_likelihood(std::string atoms_filename, std::string align_dir);
 
     HEvent* nth_from_end(int n);
     HEvent* resolve_deletion(HEvent* deletion);

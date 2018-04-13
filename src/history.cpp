@@ -1,8 +1,10 @@
 #include <fstream>
+#include <sstream>
 #include <cassert>
 #include <cmath>
 
 #include "history.h"
+#include "../lib_likelihood/likelihood.h"
 
 using namespace std;
 
@@ -347,7 +349,7 @@ void History::set_strategy(int strategy, Machine* machine) {
     this->machine = machine;
 }
 
-int History::get_history_score() {
+double History::get_history_score_num_events() {
     int score = 0;
     for (auto e : events) {
         auto type = e.second->type;
@@ -358,4 +360,10 @@ int History::get_history_score() {
         }
     }
     return score;
+}
+
+double History::get_history_score_likelihood(string atoms_filename, string align_dir) {
+    stringstream reconstruction_stream;
+    write_events(reconstruction_stream);
+    return likelihood::calculate_reconstruction_likelihood(atoms_filename, align_dir, reconstruction_stream);
 }
