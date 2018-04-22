@@ -64,6 +64,21 @@ foreach my $atomtype (keys %atoms) {
 	    push @allatoms,$atom->[1].":0.00001"
 	}
 	print join("\t",$atomtype,0,"(".join(",",@allatoms).")root;"),"\n";
+	open OUT,">$tempdir/$atomtype.aln.fa";
+	foreach my $atom (@{$atoms{$atomtype}}) {
+	    # extract sequence
+	    my $atomseq = substr($seqs{$atom->[0]},$atom->[4],
+				 $atom->[5]-$atom->[4]);
+	    if ($atom->[3] < 0) {
+		# reverse complement
+		$atomseq = reverse($atomseq);
+		$atomseq =~ tr/ACGTacgt/TGCAtgca/;
+	    }
+
+	    # put into fasta file
+	    print OUT ">",$atom->[1],"\n",$atomseq,"\n";
+	}
+	close OUT;
     } else {
 	## extract the sequences
 	open OUT,">$tempdir/$atomtype.fa";
