@@ -3,6 +3,7 @@
 
 #include <ostream>
 #include <vector>
+#include <set>
 #include <algorithm>
 
 #define For(i,n) for(int i=0; i<int(n); ++i)
@@ -20,6 +21,20 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T> v) {
         os << elem << ", ";
     });
     os << v.back() << "]";
+    return os;
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const std::set<T> s) {
+    if (!s.size()) {
+        os << "[]";
+        return os;
+    }
+    os << "[";
+    std::for_each(s.begin(), --s.end(), [&](T elem){
+        os << elem << ", ";
+    });
+    os << *(--s.end()) << "]";
     return os;
 }
 

@@ -7,8 +7,7 @@
 #include <limits>
 
 #include "ghistory.h"
-#include "constants.h"
-#include "random.h"
+#include "annealing_schedule.h"
 
 using namespace std;
 
@@ -215,19 +214,6 @@ void reconstruct_many(string hid) {
     delete h0;
 }
 
-// linear annealing schedule
-double get_temperature_linear(int step, int max_steps) {
-    double ratio = (double) step / max_steps;
-    return starting_temperature * (1 - ratio);
-}
-
-bool pick_new_history(int score_prev, int score_current, double temperature) {
-    if (score_current < score_prev) {
-        return true;
-    }
-    return (temperature / (score_current - score_prev)) > random_double();
-}
-
 void reconstruct(string atoms_file, string trees_dir, int count, int strategy) {
     string outputfile_name = "hroch_" + atoms_file + output_file_suffix;
     for(auto& c : outputfile_name) if (c=='/') c = '-';
@@ -246,39 +232,74 @@ void reconstruct(string atoms_file, string trees_dir, int count, int strategy) {
     vector<History*> hists;
     vector<int> lengths(1000, 0);
 
+    set<vector<int>> correct_slices;
+    if (debugging) {
+        // split atoms_file to basename and id
+        size_t separator_pos = atoms_file.find('-');
+        string basename = atoms_file.substr(0, separator_pos);
+        string id = atoms_file.substr(separator_pos+1, atoms_file.size() - separator_pos - 7);
+
+        History h_orig(basename, id);
+        correct_slices = h_orig.get_changed_slices(false);
+    }
+
     History* h0 = new History(atoms_file, trees_dir, strategy);
     int successful_reconstructions = 0;
     while (successful_reconstructions < count) {
-        History* h;
+        History* h = nullptr;
         if (no_annealing) {
             h = new History(h0);
             h->set_strategy(strategy, machine);
-            if (h->real_reconstruct()) {
-                successful_reconstructions++;
-            } else {
+            if (!h->real_reconstruct()) {
                 continue;
             }
-        } else {
-            int score_prev = numeric_limits<int>::max();
-            for (int i = 0; i < annealing_steps; i++) {
-                double temperature = get_temperature_linear(i, annealing_steps);
 
+            successful_reconstructions++;
+        } else {
+            AnnealingSchedule* schedule;
+            if (annealing_schedule == annealing_schedule_enum::simple) {
+                schedule = new SimpleAnnealingSchedule();
+            } else if (annealing_schedule == annealing_schedule_enum::baseline_advanced) {
+                schedule = new BaselineAdvancedAnnealingSchedule();
+            } else {
+                schedule = new AdvancedAnnealingSchedule();
+            }
+
+            while (!schedule->finished()) {
                 History* h_current = new History(h0);
                 h_current->set_strategy(strategy, machine);
-                int successful_reconstruction = h_current->real_reconstruct();
-                int score_current = h_current->get_history_score();
+                bool successful_reconstruction = h_current->real_reconstruct();
+                if (!successful_reconstruction) {
+                    delete h_current;
+                    continue;
+                }
 
-                if (successful_reconstruction && (pick_new_history(score_prev, score_current, temperature) || !h)) {
-                    h = h_current;
-                    score_prev = score_current;
+                double score = h_current->get_history_score_likelihood(atoms_file, trees_dir);
+                int other_score = h_current->get_history_score_num_events();
+                if (debugging) {
+                    auto slices = h_current->get_changed_slices();
+                    double ji = calculate_jaccard_index(slices, correct_slices);
+                    cout << score << " " << other_score << " " << ji;
                 } else {
+                    cout << score << " " << other_score;
+                }
+
+                if (schedule->accept_new(score) || !h) {
+                    h = h_current;
+                    cout << "   accepted" << endl;
+                } else {
+                    cout << endl;
                     delete h_current;
                 }
             }
+
+            cout << endl;
+            delete schedule;
             machine->reset_used_duplications();
-            if (h) {
-                successful_reconstructions++;
+            if (!h) {
+                continue;
             }
+            successful_reconstructions++;
         }
 
         int num_events = h->events.size();
@@ -361,5 +382,5 @@ int main(int argc, char **argv) {
             break;
     }
 
-    cout << "Done." << endl;
+    //cout << "Done." << endl;
 }

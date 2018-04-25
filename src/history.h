@@ -72,8 +72,10 @@ public:
     std::set<Candidate> rec_candidates(HEvent* event);
     double rec_score(const Candidate& c, HEvent* event);
 
-    double get_history_score_num_events();
+    int get_history_score_num_events();
     double get_history_score_likelihood(std::string atoms_filename, std::string align_dir);
+
+    std::set<std::vector<int>> get_changed_slices(bool dels_only_in_dups = true);
 
     HEvent* nth_from_end(int n);
     HEvent* resolve_deletion(HEvent* deletion);
@@ -100,5 +102,7 @@ public:
     History(History* original);
     ~History();
 };
+
+double calculate_jaccard_index(std::set<std::vector<int>> A, std::set<std::vector<int>> B);
 
 #endif

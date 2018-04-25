@@ -43,6 +43,14 @@ extern int gen_count;
 extern std::string gen_prefix;
 extern double gen_time;
 
+enum class annealing_schedule_enum {
+  simple,
+  advanced,
+  baseline_advanced,
+};
+
+extern annealing_schedule_enum annealing_schedule;
+
 enum class operation_mode {
   solve,
   gen,

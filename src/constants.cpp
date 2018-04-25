@@ -35,6 +35,7 @@ bool no_annealing;
 double starting_temperature;
 int annealing_steps;
 double prob_previously_used_event;
+annealing_schedule_enum annealing_schedule;
 
 int gen_count;
 string gen_prefix;
@@ -79,6 +80,7 @@ operation_mode parse_arguments(int argc, char **argv) {
             ("starting_temperature", "Starting temperature", cxxopts::value<double>()->default_value("0.2"))
             ("annealing_steps", "Annealing steps", cxxopts::value<int>()->default_value("10"))
             ("prob_previously_used_event", "Minimum probability of using an event from previous reconstruction", cxxopts::value<double>()->default_value("0"))
+            ("annealing_schedule", "", cxxopts::value<string>()->default_value("advanced"))
             ;
 
         options.add_options("Generate histories")
@@ -121,6 +123,15 @@ operation_mode parse_arguments(int argc, char **argv) {
         starting_temperature = results["starting_temperature"].as<double>();
         annealing_steps = results["annealing_steps"].as<int>();
         prob_previously_used_event = results["prob_previously_used_event"].as<double>();
+        string schedule_string = results["annealing_schedule"].as<string>();
+
+        if (schedule_string == "simple") {
+            annealing_schedule = annealing_schedule_enum::simple;
+        } else if (schedule_string == "advanced") {
+            annealing_schedule = annealing_schedule_enum::advanced;
+        } else if (schedule_string == "baseline_advanced") {
+            annealing_schedule = annealing_schedule_enum::baseline_advanced;
+        }
 
         if (results.count("gen_count")) {
             gen_count = results["gen_count"].as<int>();

@@ -1,5 +1,6 @@
 #include"constants.h"
 #include"history.h"
+#include"random.h"
 #include<fstream>
 using namespace std;
 
@@ -48,7 +49,7 @@ double calculate_reconstruction_likelihood(string atoms_filename, string align_d
     //cout << "orig lik: " << lik.data << endl;
     //cout << "full: " << fulllik.data << endl;
 
-    For(i,100) {
+    For(i,0) {
         h->edit_edge_lengths();
         //Number lik2 = h->likelihood_all();
         //cout << i << " lik po zmene: " << lik2.data << endl;
