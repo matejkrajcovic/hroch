@@ -214,6 +214,38 @@ void reconstruct_many(string hid) {
     delete h0;
 }
 
+void evaluate_reconstructions(string atoms_file, string trees_dir, int strategy, string reconstructions_file) {
+    History* h0 = new History(atoms_file, trees_dir, strategy);
+
+    // split atoms_file to basename and id
+    size_t separator_pos = atoms_file.find('-');
+    string basename = atoms_file.substr(0, separator_pos);
+    string id = atoms_file.substr(separator_pos+1, atoms_file.size() - separator_pos - 7);
+    History h_orig(basename, id);
+
+    stringstream buf;
+    ifstream f;
+    f.open(reconstructions_file, fstream::in);
+    if (!f.is_open()) {
+        cerr << "Error opening file" << endl;
+        exit(1);
+    }
+
+    for (string line; getline(f, line);){
+        if (line.length() == 0) {
+            History h(h0);
+            h.read_events(buf);
+            double ji = calculate_jaccard_index(h_orig.get_changed_slices(false), h.get_changed_slices());
+            cout << ji << " " << h.get_changed_slices().size() << endl;
+            buf.clear();
+        } else if (line[0] == '[') {
+            return;
+        } else {
+            buf << line << endl;
+        }
+    }
+}
+
 void reconstruct(string atoms_file, string trees_dir, int count, int strategy) {
     string outputfile_name = "hroch_" + atoms_file + output_file_suffix;
     for(auto& c : outputfile_name) if (c=='/') c = '-';
@@ -377,6 +409,8 @@ int main(int argc, char **argv) {
                 reconstruct_many(TEST_CASE+to_string(i));
             }
             break;
+        case operation_mode::evaluate_reconstruction:
+            evaluate_reconstructions(atoms_file, trees_dir, strategy, reconstructions_file); break;
         case operation_mode::solve:
             reconstruct(atoms_file, trees_dir, reconstructions_count, strategy);
             break;

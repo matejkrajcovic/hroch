@@ -41,6 +41,8 @@ int gen_count;
 string gen_prefix;
 double gen_time;
 
+string reconstructions_file;
+
 operation_mode parse_arguments(int argc, char **argv) {
     random_init();
     cout << fixed << setprecision(6);
@@ -65,6 +67,7 @@ operation_mode parse_arguments(int argc, char **argv) {
             ("test-c", "make statistics of candidate proposal algorithms")
             ("test-s", "make statistics of scoring algorithms")
             ("rec", "make statistics of history reconstruction algorithms")
+            ("evaluate-reconstructions", "compare correct history and reconstructions")
             ;
 
         options.add_options("Solve")
@@ -73,6 +76,7 @@ operation_mode parse_arguments(int argc, char **argv) {
             ("count", "count of reconstructed histories", cxxopts::value<int>(), "N")
             ("strategy", "reconstruction strategy", cxxopts::value<int>()->default_value(to_string(SCORE_LR)))
             ("output_file_suffix", "", cxxopts::value<string>()->default_value(""))
+            ("reconstructions_file", "file with reconstructions to compare", cxxopts::value<string>())
             ;
 
         options.add_options("Simulated annealing")
@@ -115,6 +119,9 @@ operation_mode parse_arguments(int argc, char **argv) {
         }
         if (results.count("count")) {
             reconstructions_count = results["count"].as<int>();
+        }
+        if (results.count("reconstructions_file")) {
+            reconstructions_file = results["reconstructions_file"].as<string>();
         }
         strategy = results["strategy"].as<int>();
         output_file_suffix = results["output_file_suffix"].as<string>();
@@ -164,6 +171,10 @@ operation_mode parse_arguments(int argc, char **argv) {
             return operation_mode::test_c;
         } else if (results.count("test-s")) {
             return operation_mode::test_s;
+        } else if (results.count("rec")) {
+            return operation_mode::rec;
+        } else if (results.count("evaluate-reconstructions")) {
+            return operation_mode::evaluate_reconstruction;
         } else {
             cout << "no mode of operation, see help" << endl;
             exit(1);

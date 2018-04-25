@@ -43,6 +43,8 @@ extern int gen_count;
 extern std::string gen_prefix;
 extern double gen_time;
 
+extern std::string reconstructions_file;
+
 enum class annealing_schedule_enum {
   simple,
   advanced,
@@ -60,6 +62,7 @@ enum class operation_mode {
   test_c,
   test_s,
   rec,
+  evaluate_reconstruction,
 };
 
 operation_mode parse_arguments(int argc, char **argv);

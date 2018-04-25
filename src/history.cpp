@@ -2,6 +2,7 @@
 #include <sstream>
 #include <cassert>
 #include <cmath>
+#include <algorithm>
 
 #include "history.h"
 #include "../lib_likelihood/likelihood.h"
@@ -47,7 +48,7 @@ History::History(string basename, string id) {
     init_zero();
     if (id.size()) basename += "-" + id;
     ifstream f;
-    cout << "Loading " << basename << endl;
+    //cout << "Loading " << basename << endl;
 
     for(string species : {"unicorn"}) {
         open_check(f, basename+"-"+species+".dna");
@@ -68,10 +69,10 @@ History::History(string basename, string id) {
     cherry_forest = nullptr;
     if (do_cherryness) {
         for(string species : {"unicorn"}) {
-            read_cherryness(datapath + "dupstemp_data-generated-" + id + "-" + species + "-dna/");
+            read_cherryness(datapath + "dupstemp_generated-" + id + "-" + species + "-dna/");
         }
     }
-    cout << "       " << basename << " loaded" << endl;
+    //cout << "       " << basename << " loaded" << endl;
 }
 
 string History::gen_event_name() {
