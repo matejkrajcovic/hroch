@@ -36,6 +36,10 @@ double starting_temperature;
 int annealing_steps;
 double prob_previously_used_event;
 
+int gen_count;
+string gen_prefix;
+double gen_time;
+
 operation_mode parse_arguments(int argc, char **argv) {
     random_init();
     cout << fixed << setprecision(6);
@@ -53,6 +57,7 @@ operation_mode parse_arguments(int argc, char **argv) {
 
         options.add_options("Modes of operation")
             ("solve", "")
+            ("gen", "generate custom training data")
             ("gen-all", "generate test and train data")
             ("gen-test", "generate test data")
             ("train", "produce lr-train file")
@@ -74,6 +79,12 @@ operation_mode parse_arguments(int argc, char **argv) {
             ("starting_temperature", "Starting temperature", cxxopts::value<double>()->default_value("0.2"))
             ("annealing_steps", "Annealing steps", cxxopts::value<int>()->default_value("10"))
             ("prob_previously_used_event", "Minimum probability of using an event from previous reconstruction", cxxopts::value<double>()->default_value("0"))
+            ;
+
+        options.add_options("Generate histories")
+            ("gen_count", "Count of generated histories", cxxopts::value<int>()->default_value("100"))
+            ("gen_prefix", "Prefix of generated histories", cxxopts::value<string>()->default_value("F2"))
+            ("gen_time", "Time to simulate events", cxxopts::value<double>()->default_value("0.04"))
             ;
 
         auto results = options.parse(argc, argv);
@@ -111,8 +122,18 @@ operation_mode parse_arguments(int argc, char **argv) {
         annealing_steps = results["annealing_steps"].as<int>();
         prob_previously_used_event = results["prob_previously_used_event"].as<double>();
 
+        if (results.count("gen_count")) {
+            gen_count = results["gen_count"].as<int>();
+        }
+        if (results.count("gen_prefix")) {
+            gen_prefix = results["gen_prefix"].as<string>();
+        }
+        if (results.count("gen_time")) {
+            gen_time = results["gen_time"].as<double>();
+        }
+
         if (results.count("help")) {
-            cout << options.help({"", "Modes of operation", "Solve", "Simulated annealing"}) << endl;
+            cout << options.help({"", "Modes of operation", "Solve", "Simulated annealing", "Generate histories"}) << endl;
             exit(0);
         } else if (results.count("solve")) {
             if (atoms_file.empty() || trees_dir.empty() || reconstructions_count < 0) {
@@ -120,6 +141,8 @@ operation_mode parse_arguments(int argc, char **argv) {
                 exit(0);
             }
             return operation_mode::solve;
+        } else if (results.count("gen")) {
+            return operation_mode::gen;
         } else if (results.count("gen-all")) {
             return operation_mode::gen_all;
         } else if (results.count("gen-test")) {

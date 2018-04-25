@@ -18,6 +18,19 @@ void generate_history(double time, string id) {
     history.save_to_files(datapath + "generated", id);
 }
 
+void generate(int count, string prefix, double time) {
+    int start;
+    if (count <= 100) {
+        start = 100;
+    } else {
+        start = 1000;
+    }
+
+    for (int i = start; i < (start + count); i++) {
+        generate_history(time, prefix + to_string(i));
+    }
+}
+
 void generate_test() {
     for(int i = 100; i < 200; ++i) generate_history(0.02, "F2"+to_string(i));
     for(int i = 100; i < 200; ++i) generate_history(0.03, "F3"+to_string(i));
@@ -326,6 +339,8 @@ void help(string name) {
 int main(int argc, char **argv) {
     auto mode = parse_arguments(argc, argv);
     switch (mode) {
+        case operation_mode::gen:
+            generate(gen_count, gen_prefix, gen_time); break;
         case operation_mode::gen_all:
             generate_all(); break;
         case operation_mode::gen_test:

@@ -39,8 +39,13 @@ extern double starting_temperature;
 extern int annealing_steps;
 extern double prob_previously_used_event;
 
+extern int gen_count;
+extern std::string gen_prefix;
+extern double gen_time;
+
 enum class operation_mode {
   solve,
+  gen,
   gen_all,
   gen_test,
   train,
