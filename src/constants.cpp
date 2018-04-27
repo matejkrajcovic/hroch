@@ -43,6 +43,8 @@ double gen_time;
 
 string reconstructions_file;
 
+neighbor_selection_enum neighbor_selection;
+
 operation_mode parse_arguments(int argc, char **argv) {
     random_init();
     cout << fixed << setprecision(6);
@@ -85,6 +87,7 @@ operation_mode parse_arguments(int argc, char **argv) {
             ("annealing_steps", "Annealing steps", cxxopts::value<int>()->default_value("10"))
             ("prob_previously_used_event", "Minimum probability of using an event from previous reconstruction", cxxopts::value<double>()->default_value("0"))
             ("annealing_schedule", "", cxxopts::value<string>()->default_value("advanced"))
+            ("neighbor_selection", "method to select neighbors", cxxopts::value<string>()->default_value("none"))
             ;
 
         options.add_options("Generate histories")
@@ -131,6 +134,7 @@ operation_mode parse_arguments(int argc, char **argv) {
         annealing_steps = results["annealing_steps"].as<int>();
         prob_previously_used_event = results["prob_previously_used_event"].as<double>();
         string schedule_string = results["annealing_schedule"].as<string>();
+        string neighbor_selection_string = results["neighbor_selection"].as<string>();
 
         if (schedule_string == "simple") {
             annealing_schedule = annealing_schedule_enum::simple;
@@ -138,6 +142,20 @@ operation_mode parse_arguments(int argc, char **argv) {
             annealing_schedule = annealing_schedule_enum::advanced;
         } else if (schedule_string == "baseline_advanced") {
             annealing_schedule = annealing_schedule_enum::baseline_advanced;
+        } else {
+            cerr << "Wrong argument to parameter \"annealing_schedule\" " << schedule_string << endl;
+            exit(1);
+        }
+
+        if (neighbor_selection_string == "none") {
+            neighbor_selection = neighbor_selection_enum::none;
+        } else if (neighbor_selection_string == "prioritize_used_events") {
+            neighbor_selection = neighbor_selection_enum::prioritize_used_events;
+        } else if (neighbor_selection_string == "change_event_simple") {
+            neighbor_selection = neighbor_selection_enum::change_event_simple;
+        } else {
+            cerr << "Wrong argument to parameter \"neighbor_selection\" " << neighbor_selection_string << endl;
+            exit(1);
         }
 
         if (results.count("gen_count")) {

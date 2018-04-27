@@ -190,10 +190,15 @@ bool compare(HEvent* e1, HEvent* e2) {
     return e1->event_time < e2->event_time;
 }
 
-void History::write_events(ostream& os) {
+vector<HEvent*> History::get_sorted_events() {
     vector<HEvent*> just_events;
     for(auto e : events) just_events.push_back(e.second);
     sort(just_events.begin(), just_events.end(), compare);
+    return just_events;
+}
+
+void History::write_events(ostream& os) {
+    vector<HEvent*> just_events = get_sorted_events();
     for(auto e : just_events) os << *e;
 }
 
@@ -385,9 +390,7 @@ set<vector<int>> get_deleted_slices(vector<vector<int>> children_of_parents, HEv
 set<vector<int>> History::get_changed_slices(bool dels_only_in_dups) {
     set<vector<int>> slices;
 
-    vector<HEvent*> just_events;
-    for(auto e : events) just_events.push_back(e.second);
-    sort(just_events.begin(), just_events.end(), compare);
+    vector<HEvent*> just_events = get_sorted_events();
     reverse(just_events.begin(), just_events.end());
 
     for (size_t event_index = 1; event_index < just_events.size() - 1; event_index++) {

@@ -67,4 +67,12 @@ enum class operation_mode {
 
 operation_mode parse_arguments(int argc, char **argv);
 
+enum class neighbor_selection_enum {
+  none,
+  prioritize_used_events,
+  change_event_simple,
+};
+
+extern neighbor_selection_enum neighbor_selection;
+
 #endif

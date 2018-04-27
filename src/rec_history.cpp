@@ -7,14 +7,14 @@
 
 using namespace std;
 
-void History::rec_parent(HEvent* event) {
+void History::rec_parent(HEvent* event, Candidate* dont_use) {
     set<Candidate> cset = rec_candidates(event);
     vector<Candidate> cs(cset.begin(), cset.end());
     if (cs.size() == 0) return;
     vector<double> scores;
     vector<double> sum_scores = {0};
 
-    if (prob_previously_used_event != 0) {
+    if (neighbor_selection == neighbor_selection_enum::prioritize_used_events) {
         vector<bool> already_used;
         double used_scores_sum = 0;
         double unused_scores_sum = 0;
@@ -43,6 +43,9 @@ void History::rec_parent(HEvent* event) {
         }
     } else {
         for (auto c : cs) {
+            if ((dont_use != nullptr) && (*dont_use == c)) {
+                continue;
+            }
             double score = rec_score(c, event);
             scores.push_back(score);
         }
@@ -54,11 +57,16 @@ void History::rec_parent(HEvent* event) {
 
     double pick = random_double(0, sum_scores.back());
     For(i, cs.size()) if (pick < sum_scores[i+1]) {
-        rec_compute_parent(cs[i], event);
-        rec_merge_candidate(cs[i], event);
-        machine->add_used_duplication(cs[i], event);
+        apply_candidate(cs[i], event);
         return;
     }
+}
+
+void History::apply_candidate(const Candidate& c, HEvent* event) {
+    used_candidates.push_back(c);
+    machine->add_used_duplication(c, event);
+    rec_compute_parent(c, event);
+    rec_merge_candidate(c, event);
 }
 
 set<Candidate> History::rec_candidates(HEvent* event) {
@@ -198,12 +206,17 @@ void History::proc_reconstruct(int number) {
     }
 }
 
-bool History::real_reconstruct() {
-    HEvent* current = events.begin()->second;
-    double now_time = current->event_time;
-    current = new HEvent(current->species, gen_event_name(), "", current);
-    events[current->name] = current;
-    current->event_time = now_time -= 0.01;
+bool History::real_reconstruct(HEvent* current) {
+    double now_time;
+    if (current == nullptr) { // start reconstruction from leafs
+        current = events.begin()->second;
+        now_time = current->event_time;
+        current = new HEvent(current->species, gen_event_name(), "", current);
+        events[current->name] = current;
+        current->event_time = now_time -= 0.01;
+    } else { // continue reconstruction from event
+        now_time = current->event_time;
+    }
 
     while(!current->is_final()) {
         rec_parent(current);
@@ -309,3 +322,47 @@ void History::proc_test_score(int strategy, string mark) {
     stats["good  "+mark] = double(is_max_sum)/tot_cnt;
 }
 
+History* History::rec_similar(int strategy, Machine* machine) {
+    int last_used = random_int(0, used_candidates.size());
+
+    History* h_new = new History(this);
+    h_new->set_strategy(strategy, machine);
+
+    HEvent* event = h_new->leaf_events["unicorn"];
+    double now_time = event->event_time;
+    event = new HEvent(event->species, h_new->gen_event_name(), "", event);
+    h_new->events[event->name] = event;
+    event->event_time = now_time -= 0.01;
+
+    for (int i = 0; i < last_used; i++) {
+        h_new->apply_candidate(used_candidates[i], event);
+        if (event->parent == nullptr) {
+            // TODO: This should never happen. You can always remove duplicated atoms, even one by one.
+            cout << "Unsuccessful reconstruction" << endl;
+            delete h_new;
+            return nullptr;
+        }
+        while(event->parent != nullptr) {
+            event = event->parent;
+            h_new->events[event->name] = event;
+            event->event_time = now_time -= 0.01;
+        }
+    }
+
+    h_new->rec_parent(event, &used_candidates[last_used]);
+    if (event->parent == nullptr) {
+        // TODO: This should never happen. You can always remove duplicated atoms, even one by one.
+        cout << "Unsuccessful reconstruction" << endl;
+        delete h_new;
+        return nullptr;
+    }
+    while(event->parent != nullptr) {
+        event = event->parent;
+        h_new->events[event->name] = event;
+        event->event_time = now_time -= 0.01;
+    }
+
+    h_new->real_reconstruct(event);
+
+    return h_new;
+}

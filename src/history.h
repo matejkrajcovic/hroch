@@ -56,27 +56,31 @@ public:
     std::map<std::string, HEvent*> events; // name is key
     std::map<std::string, HEvent*> leaf_events; // species is key
     std::map<int, int> type_dna_length;
+    std::vector<Candidate> used_candidates;
 
     void set_strategy(int strategy, Machine* machine = nullptr);
 
     void proc_learn();
     void proc_reconstruct(int number = EVAL_INF);
-    bool real_reconstruct();
+    bool real_reconstruct(HEvent* current = nullptr);
     void proc_test_candi(int strategy, std::string mark);
     void proc_test_score(int strategy, std::string mark);
-    void rec_parent(HEvent* event);
+    void rec_parent(HEvent* event, Candidate* dont_use = nullptr);
     void rec_compute_parent(const Candidate& C, HEvent* event);
     HEvent* rec_see_event(const Candidate& C, HEvent* event);
     void rec_setup_scoring_data(const Candidate& C, HEvent* event, ScoringData* sd);
     void rec_merge_candidate(const Candidate& C, HEvent* event);
     std::set<Candidate> rec_candidates(HEvent* event);
     double rec_score(const Candidate& c, HEvent* event);
+    History* rec_similar(int strategy, Machine* machine);
+    void apply_candidate(const Candidate& c, HEvent* event);
 
     int get_history_score_num_events();
     double get_history_score_likelihood(std::string atoms_filename, std::string align_dir);
 
     std::set<std::vector<int>> get_changed_slices(bool dels_only_in_dups = true);
 
+    std::vector<HEvent*> get_sorted_events();
     HEvent* nth_from_end(int n);
     HEvent* resolve_deletion(HEvent* deletion);
     int is_original(HEvent* event, bool strict = false);

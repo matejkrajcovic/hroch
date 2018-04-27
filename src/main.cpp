@@ -298,9 +298,17 @@ void reconstruct(string atoms_file, string trees_dir, int count, int strategy) {
             }
 
             while (!schedule->finished()) {
-                History* h_current = new History(h0);
-                h_current->set_strategy(strategy, machine);
-                bool successful_reconstruction = h_current->real_reconstruct();
+                History* h_current;
+                bool successful_reconstruction;
+                if (h && (neighbor_selection == neighbor_selection_enum::change_event_simple)) {
+                    h_current = h->rec_similar(strategy, machine);
+                    successful_reconstruction = h_current != nullptr;
+                } else {
+                    h_current = new History(h0);
+                    h_current->set_strategy(strategy, machine);
+                    successful_reconstruction = h_current->real_reconstruct();
+                }
+
                 if (!successful_reconstruction) {
                     delete h_current;
                     continue;
