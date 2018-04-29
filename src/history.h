@@ -72,7 +72,7 @@ public:
     void rec_merge_candidate(const Candidate& C, HEvent* event);
     std::set<Candidate> rec_candidates(HEvent* event);
     double rec_score(const Candidate& c, HEvent* event);
-    History* rec_similar(int strategy, Machine* machine);
+    History* rec_similar(int strategy, Machine* machine, int progress);
     void apply_candidate(const Candidate& c, HEvent* event);
 
     int get_history_score_num_events();

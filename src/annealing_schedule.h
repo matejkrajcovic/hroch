@@ -10,6 +10,7 @@ public:
   virtual ~AnnealingSchedule() {};
   virtual bool accept_new(const double score) = 0;
   virtual bool finished() = 0;
+  virtual int get_progress() = 0;
 };
 
 class SimpleAnnealingSchedule : public AnnealingSchedule {
@@ -21,6 +22,7 @@ public:
   SimpleAnnealingSchedule();
   bool finished();
   bool accept_new(const double score);
+  int get_progress() { return -1; };
 };
 
 class AdvancedAnnealingSchedule : public AnnealingSchedule {
@@ -29,6 +31,7 @@ public:
   AdvancedAnnealingSchedule();
   bool accept_new(const double score);
   bool finished();
+  int get_progress() { return -1; };
 };
 
 class BaselineAdvancedAnnealingSchedule : public AnnealingSchedule {
@@ -37,6 +40,19 @@ public:
   BaselineAdvancedAnnealingSchedule();
   bool accept_new(const double score);
   bool finished();
+  int get_progress() { return -1; };
+};
+
+class NewAdvancedAnnealingSchedule : public AnnealingSchedule {
+  int current_step;
+  int total_steps;
+  bool num_events;
+  void update_temperature();
+public:
+  NewAdvancedAnnealingSchedule(double initial_score);
+  bool accept_new(const double score);
+  bool finished();
+  int get_progress();
 };
 
 #endif

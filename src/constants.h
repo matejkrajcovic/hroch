@@ -75,4 +75,11 @@ enum class neighbor_selection_enum {
 
 extern neighbor_selection_enum neighbor_selection;
 
+enum class scoring_enum {
+  num_events,
+  likelihood,
+};
+
+extern scoring_enum scoring;
+
 #endif

@@ -42,6 +42,7 @@ string gen_prefix;
 double gen_time;
 
 string reconstructions_file;
+scoring_enum scoring;
 
 neighbor_selection_enum neighbor_selection;
 
@@ -79,6 +80,7 @@ operation_mode parse_arguments(int argc, char **argv) {
             ("strategy", "reconstruction strategy", cxxopts::value<int>()->default_value(to_string(SCORE_LR)))
             ("output_file_suffix", "", cxxopts::value<string>()->default_value(""))
             ("reconstructions_file", "file with reconstructions to compare", cxxopts::value<string>())
+            ("scoring", "method to score reconstruction while solving", cxxopts::value<string>()->default_value("num_events"))
             ;
 
         options.add_options("Simulated annealing")
@@ -135,6 +137,7 @@ operation_mode parse_arguments(int argc, char **argv) {
         prob_previously_used_event = results["prob_previously_used_event"].as<double>();
         string schedule_string = results["annealing_schedule"].as<string>();
         string neighbor_selection_string = results["neighbor_selection"].as<string>();
+        string scoring_string = results["scoring"].as<string>();
 
         if (schedule_string == "simple") {
             annealing_schedule = annealing_schedule_enum::simple;
@@ -155,6 +158,15 @@ operation_mode parse_arguments(int argc, char **argv) {
             neighbor_selection = neighbor_selection_enum::change_event_simple;
         } else {
             cerr << "Wrong argument to parameter \"neighbor_selection\" " << neighbor_selection_string << endl;
+            exit(1);
+        }
+
+        if (scoring_string == "num_events") {
+            scoring = scoring_enum::num_events;
+        } else if (scoring_string == "likelihood") {
+            scoring = scoring_enum::likelihood;
+        } else {
+            cerr << "Wrong argument to parameter \"scoring\" " << scoring_string << endl;
             exit(1);
         }
 

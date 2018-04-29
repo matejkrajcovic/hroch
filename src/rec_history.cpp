@@ -322,8 +322,16 @@ void History::proc_test_score(int strategy, string mark) {
     stats["good  "+mark] = double(is_max_sum)/tot_cnt;
 }
 
-History* History::rec_similar(int strategy, Machine* machine) {
-    int last_used = random_int(0, used_candidates.size());
+History* History::rec_similar(int strategy, Machine* machine, int progress) {
+    int last_used;
+    if (progress == -1) {
+        last_used = random_int(0, used_candidates.size());
+    } else {
+        size_t size = used_candidates.size();
+        int from = progress * (size / 3);
+        int to = (progress + 1) * (size / 3);
+        last_used = random_int(from, to);
+    }
 
     History* h_new = new History(this);
     h_new->set_strategy(strategy, machine);

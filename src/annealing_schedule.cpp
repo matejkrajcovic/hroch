@@ -3,6 +3,7 @@
 #include "annealing_schedule.h"
 #include "constants.h"
 #include "random.h"
+#include "scoring.h"
 
 using namespace std;
 
@@ -26,7 +27,7 @@ SimpleAnnealingSchedule::SimpleAnnealingSchedule() {
   total_steps = annealing_steps;
   current_step = 1;
   change = starting_temperature / total_steps;
-  previous_score = -numeric_limits<double>::max();
+  previous_score = get_initial_score();
 }
 
 bool SimpleAnnealingSchedule::finished() {
@@ -46,7 +47,7 @@ bool SimpleAnnealingSchedule::accept_new(const double score) {
 
 AdvancedAnnealingSchedule::AdvancedAnnealingSchedule() {
   temperature = starting_temperature;
-  previous_score = -numeric_limits<double>::max();
+  previous_score = get_initial_score();
 }
 
 bool AdvancedAnnealingSchedule::finished() {
@@ -65,7 +66,7 @@ bool AdvancedAnnealingSchedule::accept_new(const double score) {
 
 BaselineAdvancedAnnealingSchedule::BaselineAdvancedAnnealingSchedule() {
   temperature = starting_temperature;
-  previous_score = -numeric_limits<double>::max();
+  previous_score = get_initial_score();
 }
 
 bool BaselineAdvancedAnnealingSchedule::finished() {
@@ -83,4 +84,45 @@ bool BaselineAdvancedAnnealingSchedule::accept_new(const double score) {
   }
   update_temperature();
   return will_accept;
+}
+
+NewAdvancedAnnealingSchedule::NewAdvancedAnnealingSchedule(double initial_score) {
+  temperature = 0.4;
+  current_step = 0;
+  total_steps = annealing_steps;
+  previous_score = initial_score;
+}
+
+bool NewAdvancedAnnealingSchedule::finished() {
+  return current_step == total_steps;
+}
+
+void NewAdvancedAnnealingSchedule::update_temperature() {
+  temperature /= 3;
+}
+
+bool NewAdvancedAnnealingSchedule::accept_new(const double score) {
+  bool will_accept;
+  if (is_better_score(previous_score, score)) {
+    will_accept = true;
+  } else {
+    will_accept = random_double() < exp(get_negative_difference(previous_score, score) / temperature);
+    if (will_accept) {
+      cout << "accepting worse" << endl;
+    }
+  }
+  if (will_accept) {
+    previous_score = score;
+  }
+  current_step++;
+  return will_accept;
+}
+
+int NewAdvancedAnnealingSchedule::get_progress() {
+  int old_progress = floor((double) (current_step - 1) / ceil((double) total_steps / 3));
+  int new_progress = floor((double) current_step / ceil((double) total_steps / 3));
+  if (old_progress != new_progress) {
+    update_temperature();
+  }
+  return new_progress;
 }

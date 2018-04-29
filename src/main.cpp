@@ -6,8 +6,10 @@
 #include <cmath>
 #include <limits>
 
+#include "constants.h"
 #include "ghistory.h"
 #include "annealing_schedule.h"
+#include "scoring.h"
 
 using namespace std;
 
@@ -231,14 +233,44 @@ void evaluate_reconstructions(string atoms_file, string trees_dir, int strategy,
         exit(1);
     }
 
+    double best_score = 0;
+    vector<double> best_ji;
+    if (scoring == scoring_enum::num_events) {
+        best_score = numeric_limits<int>::max();
+    } else if (scoring == scoring_enum::likelihood) {
+        best_score = -numeric_limits<double>::max();
+    }
     for (string line; getline(f, line);){
         if (line.length() == 0) {
             History h(h0);
             h.read_events(buf);
-            double ji = calculate_jaccard_index(h_orig.get_changed_slices(false), h.get_changed_slices());
-            cout << ji << " " << h.get_changed_slices().size() << endl;
+
+            double score = 0;
+            bool better_score = false;
+            bool same_score = false;
+            if (scoring == scoring_enum::num_events) {
+                score = h.get_history_score_num_events();
+                better_score = score < best_score;
+                same_score = score == best_score;
+            } else if (scoring == scoring_enum::likelihood) {
+                score = h.get_history_score_likelihood(atoms_file, trees_dir);
+                better_score = score > best_score;
+                same_score = score == best_score;
+            }
+
+            if (better_score) {
+                best_score = score;
+                best_ji.clear();
+                best_ji.push_back(calculate_jaccard_index(h_orig.get_changed_slices(false), h.get_changed_slices()));
+            } else if (same_score) {
+                best_ji.push_back(calculate_jaccard_index(h_orig.get_changed_slices(false), h.get_changed_slices()));
+            }
+
             buf.clear();
         } else if (line[0] == '[') {
+            double sum = std::accumulate(best_ji.begin(), best_ji.end(), 0.0);
+            double avg = sum / best_ji.size();
+            cout << best_score << " " << avg << endl;
             return;
         } else {
             buf << line << endl;
@@ -260,7 +292,12 @@ void reconstruct(string atoms_file, string trees_dir, int count, int strategy) {
     if (strategy == SCORE_LRS) machine = new MachineLinearStrict();
     if (machine != nullptr) machine->load();
 
-    int shortest = 123456789;
+    double best = 0;
+    if (scoring == scoring_enum::num_events) {
+        best = numeric_limits<int>::max();
+    } else if (scoring == scoring_enum::likelihood) {
+        best = -numeric_limits<double>::max();
+    }
     vector<History*> hists;
     vector<int> lengths(1000, 0);
 
@@ -288,6 +325,29 @@ void reconstruct(string atoms_file, string trees_dir, int count, int strategy) {
 
             successful_reconstructions++;
         } else {
+            // bootstrap
+            double previous_score = get_initial_score();
+            for (int i = 0; i < 10; i++) {
+                History* h_new = nullptr;
+                h_new = new History(h0);
+                h_new->set_strategy(strategy, machine);
+                if (!h_new->real_reconstruct()) {
+                    continue;
+                }
+
+                double score = get_score(h_new, atoms_file, trees_dir);
+                cout << score << " ";
+                if (!h || is_better_score(previous_score, score)) {
+                    cout << "accepted" << endl;
+                    previous_score = score;
+                    delete h;
+                    h = h_new;
+                } else {
+                    cout << endl;
+                    delete h_new;
+                }
+            }
+
             AnnealingSchedule* schedule;
             if (annealing_schedule == annealing_schedule_enum::simple) {
                 schedule = new SimpleAnnealingSchedule();
@@ -296,12 +356,21 @@ void reconstruct(string atoms_file, string trees_dir, int count, int strategy) {
             } else {
                 schedule = new AdvancedAnnealingSchedule();
             }
+            delete schedule;
+            schedule = new NewAdvancedAnnealingSchedule(previous_score);
 
+            int previous_progress = -1;
             while (!schedule->finished()) {
                 History* h_current;
                 bool successful_reconstruction;
                 if (h && (neighbor_selection == neighbor_selection_enum::change_event_simple)) {
-                    h_current = h->rec_similar(strategy, machine);
+                    int progress = schedule->get_progress();
+                    if (progress != previous_progress) {
+                        cout << endl << endl << progress << endl << endl << endl;
+                        previous_progress = progress;
+                        previous_progress = progress;
+                    }
+                    h_current = h->rec_similar(strategy, machine, progress);
                     successful_reconstruction = h_current != nullptr;
                 } else {
                     h_current = new History(h0);
@@ -314,15 +383,16 @@ void reconstruct(string atoms_file, string trees_dir, int count, int strategy) {
                     continue;
                 }
 
-                double score = h_current->get_history_score_likelihood(atoms_file, trees_dir);
-                int other_score = h_current->get_history_score_num_events();
                 if (debugging) {
+                    int score_num_events = h_current->get_history_score_num_events();
+                    double score_likelihood = h_current->get_history_score_likelihood(atoms_file, trees_dir);
                     auto slices = h_current->get_changed_slices();
                     double ji = calculate_jaccard_index(slices, correct_slices);
-                    cout << score << " " << other_score << " " << ji;
-                } else {
-                    cout << score << " " << other_score;
+                    cout << score_likelihood << " " << score_num_events << " " << ji << " - ";
                 }
+
+                double score = get_score(h_current, atoms_file, trees_dir);
+                cout << score;
 
                 if (schedule->accept_new(score) || !h) {
                     h = h_current;
@@ -342,14 +412,26 @@ void reconstruct(string atoms_file, string trees_dir, int count, int strategy) {
             successful_reconstructions++;
         }
 
+
         int num_events = h->events.size();
         lengths[num_events]++;
-        if (num_events < shortest) {
-            shortest = num_events;
-            for(auto hp : hists) delete hp;
-            hists.clear();
+        double score = 0;
+        if (scoring == scoring_enum::num_events) {
+            score = num_events;
+            if (score < best) {
+                best = score;
+                for(auto hp : hists) delete hp;
+                hists.clear();
+            }
+        } else if (scoring == scoring_enum::likelihood) {
+            score = h->get_history_score_likelihood(atoms_file, trees_dir);
+            if (score > best) {
+                best = score;
+                for(auto hp : hists) delete hp;
+                hists.clear();
+            }
         }
-        if (num_events == shortest) {
+        if (score == best) {
             bool is_there = false;
             for(auto hist : hists) if (h->same_as(hist)) is_there = true;
             if (!is_there) hists.push_back(h);
@@ -363,9 +445,9 @@ void reconstruct(string atoms_file, string trees_dir, int count, int strategy) {
         h->write_events(cout);
         cout << endl;
     }
-    cout << shortest << endl;
+    //cout << shortest << endl;
     cout << lengths << endl;
-    ofile << shortest << endl;
+    //ofile << shortest << endl;
     ofile << lengths << endl;
     if (machine != nullptr) delete machine;
     ofile.close();
