@@ -233,36 +233,24 @@ void evaluate_reconstructions(string atoms_file, string trees_dir, int strategy,
         exit(1);
     }
 
-    double best_score = 0;
     vector<double> best_ji;
-    if (scoring == scoring_enum::num_events) {
-        best_score = numeric_limits<int>::max();
-    } else if (scoring == scoring_enum::likelihood) {
-        best_score = -numeric_limits<double>::max();
-    }
+    double min_events = numeric_limits<int>::max();
     for (string line; getline(f, line);){
         if (line.length() == 0) {
             History h(h0);
             h.read_events(buf);
 
-            double score = 0;
-            bool better_score = false;
-            bool same_score = false;
-            if (scoring == scoring_enum::num_events) {
-                score = h.get_history_score_num_events();
-                better_score = score < best_score;
-                same_score = score == best_score;
-            } else if (scoring == scoring_enum::likelihood) {
-                score = h.get_history_score_likelihood(atoms_file, trees_dir);
-                better_score = score > best_score;
-                same_score = score == best_score;
-            }
+            double num_events = h.get_history_score_num_events();
+            //double score_num_events = h.get_history_score_num_events();
+            //double score_likelihood = h.get_history_score_likelihood(atoms_file, trees_dir);
+            //double ji = calculate_jaccard_index(h_orig.get_changed_slices(false), h.get_changed_slices());
+            //cout << score_num_events << " " << score_likelihood << " " << ji << endl;
 
-            if (better_score) {
-                best_score = score;
+            if (num_events < min_events) {
+                min_events = num_events;
                 best_ji.clear();
                 best_ji.push_back(calculate_jaccard_index(h_orig.get_changed_slices(false), h.get_changed_slices()));
-            } else if (same_score) {
+            } else if (num_events == min_events) {
                 best_ji.push_back(calculate_jaccard_index(h_orig.get_changed_slices(false), h.get_changed_slices()));
             }
 
@@ -270,7 +258,7 @@ void evaluate_reconstructions(string atoms_file, string trees_dir, int strategy,
         } else if (line[0] == '[') {
             double sum = std::accumulate(best_ji.begin(), best_ji.end(), 0.0);
             double avg = sum / best_ji.size();
-            cout << best_score << " " << avg << endl;
+            cout << min_events << " " << h_orig.get_changed_slices(false).size() << " " << avg << endl;
             return;
         } else {
             buf << line << endl;
