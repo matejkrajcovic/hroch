@@ -359,10 +359,10 @@ int History::get_history_score_num_events() {
     return get_changed_slices().size();
 }
 
-double History::get_history_score_likelihood(string atoms_filename, string align_dir) {
+double History::get_history_score_likelihood(string atoms_filename, string align_dir, int improvements) {
     stringstream reconstruction_stream;
     write_events(reconstruction_stream);
-    return likelihood::calculate_reconstruction_likelihood(atoms_filename, align_dir, reconstruction_stream);
+    return likelihood::calculate_reconstruction_likelihood(atoms_filename, align_dir, reconstruction_stream, improvements);
 }
 
 set<vector<int>> get_deleted_slices(vector<vector<int>> children_of_parents, HEvent* parent, size_t current_from, size_t current_to,

@@ -76,7 +76,7 @@ public:
     void apply_candidate(const Candidate& c, HEvent* event);
 
     int get_history_score_num_events();
-    double get_history_score_likelihood(std::string atoms_filename, std::string align_dir);
+    double get_history_score_likelihood(std::string atoms_filename, std::string align_dir, int improvements = 0);
 
     std::set<std::vector<int>> get_changed_slices(bool dels_only_in_dups = true);
 

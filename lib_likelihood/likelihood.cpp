@@ -5,7 +5,7 @@
 using namespace std;
 
 namespace likelihood {
-double calculate_reconstruction_likelihood(string atoms_filename, string align_dir, stringstream& reconstruction_stream) {
+double calculate_reconstruction_likelihood(string atoms_filename, string align_dir, stringstream& reconstruction_stream, int improvements) {
     random_init();
 
     HistoryLikelihood* h = new HistoryLikelihood();
@@ -49,7 +49,7 @@ double calculate_reconstruction_likelihood(string atoms_filename, string align_d
     //cout << "orig lik: " << lik.data << endl;
     //cout << "full: " << fulllik.data << endl;
 
-    For(i,0) {
+    For(i,improvements) {
         h->edit_edge_lengths();
         //Number lik2 = h->likelihood_all();
         //cout << i << " lik po zmene: " << lik2.data << endl;
