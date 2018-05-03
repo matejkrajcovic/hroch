@@ -44,6 +44,7 @@ public:
     int compute_is_left();
     void test_stats(History* h, std::ostream& os);
     void write_detailed(std::ostream& os);
+    void clear_parent();
 
     friend bool operator==(const HEvent& e1, const HEvent& e2) {
         if (e1.type != e2.type) return false;

@@ -10,16 +10,16 @@
 class HEvent;
 
 class Machine {
-    std::set<size_t> used_duplications_now;
-    std::set<size_t> used_duplications_prev;
 public:
+    std::set<std::vector<int>> used_duplications_now;
+    std::set<std::vector<int>> used_duplications_prev;
     virtual void train_data(const std::vector<double>& values, double result) = 0;
     virtual void save() {;}
     virtual void load() {;}
     virtual double predict(const std::vector<double>& values) = 0;
     virtual ~Machine() {};
-    void add_used_duplication(const Candidate& c, HEvent* event);
-    bool was_duplication_used(const Candidate& c, HEvent* event);
+    void add_used_duplication(HEvent* event);
+    bool was_duplication_used(HEvent* event);
     void reset_used_duplications();
 };
 

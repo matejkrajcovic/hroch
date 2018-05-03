@@ -87,7 +87,7 @@ bool BaselineAdvancedAnnealingSchedule::accept_new(const double score) {
 }
 
 NewAdvancedAnnealingSchedule::NewAdvancedAnnealingSchedule(double initial_score) {
-  temperature = 0.4;
+  temperature = starting_temperature;
   current_step = 0;
   total_steps = annealing_steps;
   previous_score = initial_score;

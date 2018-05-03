@@ -2,7 +2,6 @@
 #include <fstream>
 #include <cmath>
 #include <cassert>
-#include <boost/functional/hash.hpp>
 #include <utility>
 
 #include "machine.h"
@@ -67,23 +66,33 @@ double MachineLinear::predict(const vector<double>& values) {
     return 1./(1.+exp(-res));
 }
 
-size_t calculate_duplication_hash(const Candidate &c, HEvent* event) {
-    vector<int> atoms;
-    for (auto atom : event->atoms) {
-        atoms.push_back(atom.type);
+void Machine::add_used_duplication(HEvent* event) {
+    HEvent* parent = event;
+    while (parent->parent) {
+        parent = parent->parent;
+    }
+    auto slices = get_changed_slices_of_event(event, parent);
+    for (auto slice : slices) {
+        used_duplications_now.insert(slice);
+        used_duplications_now.insert(get_inverse_slice(slice));
+    }
+}
+
+bool Machine::was_duplication_used(HEvent* event) {
+    HEvent* parent = event;
+    while (parent->parent) {
+        parent = parent->parent;
+    }
+    auto slices = get_changed_slices_of_event(event, parent);
+    bool all_used = true;
+    for (auto slice : slices) {
+        if (used_duplications_prev.find(slice) == used_duplications_prev.end()) {
+            all_used = false;
+            break;
+        }
     }
 
-    return boost::hash_value(make_pair(atoms, c.is_inv()));
-}
-
-void Machine::add_used_duplication(const Candidate& c, HEvent* event) {
-    auto hash = calculate_duplication_hash(c, event);
-    used_duplications_now.insert(hash);
-}
-
-bool Machine::was_duplication_used(const Candidate& c, HEvent* event) {
-    auto hash = calculate_duplication_hash(c, event);
-    return used_duplications_prev.find(hash) != used_duplications_prev.end();
+    return all_used;
 }
 
 void Machine::reset_used_duplications() {

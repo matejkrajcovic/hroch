@@ -79,6 +79,7 @@ public:
     double get_history_score_likelihood(std::string atoms_filename, std::string align_dir, int improvements = 0);
 
     std::set<std::vector<int>> get_changed_slices(bool dels_only_in_dups = true);
+    bool was_duplication_used(const Candidate& c, HEvent* event);
 
     std::vector<HEvent*> get_sorted_events();
     HEvent* nth_from_end(int n);
@@ -108,5 +109,9 @@ public:
 };
 
 double calculate_jaccard_index(std::set<std::vector<int>> A, std::set<std::vector<int>> B);
+std::set<std::vector<int>> slices_union(std::set<std::vector<int>>& A, std::set<std::vector<int>>& B);
+std::set<std::vector<int>> slices_intersection(std::set<std::vector<int>>& A, std::set<std::vector<int>>& B);
+std::set<std::vector<int>> get_changed_slices_of_event(HEvent* current, HEvent* parent, bool dels_only_in_dups = true);
+std::vector<int> get_inverse_slice(std::vector<int>& slice);
 
 #endif

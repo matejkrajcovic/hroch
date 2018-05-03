@@ -21,7 +21,7 @@ void History::rec_parent(HEvent* event, Candidate* dont_use) {
         for (auto c : cs) {
             double score = rec_score(c, event);
             scores.push_back(score);
-            bool is_already_used = machine->was_duplication_used(c, event);
+            bool is_already_used = was_duplication_used(c, event);
             already_used.push_back(is_already_used);
             if (is_already_used) {
                 used_scores_sum += score;
@@ -62,11 +62,18 @@ void History::rec_parent(HEvent* event, Candidate* dont_use) {
     }
 }
 
+bool History::was_duplication_used(const Candidate& c, HEvent* event) {
+    rec_compute_parent(c, event);
+    bool was_used = machine->was_duplication_used(event);
+    event->clear_parent();
+    return was_used;
+}
+
 void History::apply_candidate(const Candidate& c, HEvent* event) {
     used_candidates.push_back(c);
-    machine->add_used_duplication(c, event);
     rec_compute_parent(c, event);
     rec_merge_candidate(c, event);
+    machine->add_used_duplication(event);
 }
 
 set<Candidate> History::rec_candidates(HEvent* event) {

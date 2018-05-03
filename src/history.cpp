@@ -387,6 +387,58 @@ set<vector<int>> get_deleted_slices(vector<vector<int>> children_of_parents, HEv
     return slices;
 }
 
+set<vector<int>> get_changed_slices_of_event(HEvent* current, HEvent* parent, bool dels_only_in_dups) {
+    set<vector<int>> slices;
+
+    vector<vector<int>> children_of_parents(parent->atoms.size(), vector<int>());
+    for (size_t i = 0; i < current->atoms.size(); i++) {
+        children_of_parents[current->atom_parents[i]].push_back(i);
+    }
+
+    auto has_two_children = [](auto v) {return v.size() == 2;};
+    auto first_duplicated_atom_parent = find_if(children_of_parents.begin(), children_of_parents.end(), has_two_children);
+    auto last_duplicated_atom_parent = find_if(children_of_parents.rbegin(), children_of_parents.rend(), has_two_children);
+    auto last_duplicated_atom_parent_next = last_duplicated_atom_parent.base();
+    size_t parent_from = distance(children_of_parents.begin(), first_duplicated_atom_parent);
+    size_t parent_to = distance(children_of_parents.begin(), last_duplicated_atom_parent_next);
+
+    vector<int> slice;
+    for (size_t i = parent_from; i < parent_to; i++) {
+        slice.push_back(parent->atoms[i].type);
+    }
+    slices.insert(slice);
+
+    if (current->type == "del") {
+        if (dels_only_in_dups) { // dels can only be in duplicated parts
+            size_t current_from = (*first_duplicated_atom_parent)[0];
+            size_t current_to = (*last_duplicated_atom_parent)[0];
+            auto del_slices = get_deleted_slices(children_of_parents, parent, current_from, current_to, parent_from, parent_to);
+            slices.merge(del_slices);
+            del_slices.clear();
+
+            current_from = (*first_duplicated_atom_parent)[1];
+            current_to = (*last_duplicated_atom_parent)[1];
+            del_slices = get_deleted_slices(children_of_parents, parent, current_from, current_to, parent_from, parent_to);
+            slices.merge(del_slices);
+        } else { // dels are in separate events
+            auto has_zero_children = [](auto v) {return v.size() == 0;};
+            auto first_deleted_atom_parent = find_if(children_of_parents.begin(), children_of_parents.end(), has_zero_children);
+            auto last_deleted_atom_parent = find_if(children_of_parents.rbegin(), children_of_parents.rend(), has_zero_children);
+            auto last_deleted_atom_parent_next = last_deleted_atom_parent.base();
+            size_t parent_from = distance(children_of_parents.begin(), first_deleted_atom_parent);
+            size_t parent_to = distance(children_of_parents.begin(), last_deleted_atom_parent_next);
+
+            vector<int> slice;
+            for (size_t i = parent_from; i < parent_to; i++) {
+                slice.push_back(parent->atoms[i].type);
+            }
+            slices.insert(slice);
+        }
+    }
+
+    return slices;
+}
+
 set<vector<int>> History::get_changed_slices(bool dels_only_in_dups) {
     set<vector<int>> slices;
 
@@ -397,58 +449,13 @@ set<vector<int>> History::get_changed_slices(bool dels_only_in_dups) {
         // skip leaf and root
         HEvent* current = just_events[event_index];
         HEvent* parent = just_events[event_index + 1];
-
-        vector<vector<int>> children_of_parents(parent->atoms.size(), vector<int>());
-        for (size_t i = 0; i < current->atoms.size(); i++) {
-            children_of_parents[current->atom_parents[i]].push_back(i);
-        }
-
-        auto has_two_children = [](auto v) {return v.size() == 2;};
-        auto first_duplicated_atom_parent = find_if(children_of_parents.begin(), children_of_parents.end(), has_two_children);
-        auto last_duplicated_atom_parent = find_if(children_of_parents.rbegin(), children_of_parents.rend(), has_two_children);
-        auto last_duplicated_atom_parent_next = last_duplicated_atom_parent.base();
-        size_t parent_from = distance(children_of_parents.begin(), first_duplicated_atom_parent);
-        size_t parent_to = distance(children_of_parents.begin(), last_duplicated_atom_parent_next);
-
-        vector<int> slice;
-        for (size_t i = parent_from; i < parent_to; i++) {
-            slice.push_back(parent->atoms[i].type);
-        }
-        slices.insert(slice);
-
-        if (current->type == "del") {
-            if (dels_only_in_dups) { // dels can only be in duplicated parts
-                size_t current_from = (*first_duplicated_atom_parent)[0];
-                size_t current_to = (*last_duplicated_atom_parent)[0];
-                auto del_slices = get_deleted_slices(children_of_parents, parent, current_from, current_to, parent_from, parent_to);
-                slices.merge(del_slices);
-                del_slices.clear();
-
-                current_from = (*first_duplicated_atom_parent)[1];
-                current_to = (*last_duplicated_atom_parent)[1];
-                del_slices = get_deleted_slices(children_of_parents, parent, current_from, current_to, parent_from, parent_to);
-                slices.merge(del_slices);
-            } else { // dels are in separate events
-                auto has_zero_children = [](auto v) {return v.size() == 0;};
-                auto first_deleted_atom_parent = find_if(children_of_parents.begin(), children_of_parents.end(), has_zero_children);
-                auto last_deleted_atom_parent = find_if(children_of_parents.rbegin(), children_of_parents.rend(), has_zero_children);
-                auto last_deleted_atom_parent_next = last_deleted_atom_parent.base();
-                size_t parent_from = distance(children_of_parents.begin(), first_deleted_atom_parent);
-                size_t parent_to = distance(children_of_parents.begin(), last_deleted_atom_parent_next);
-
-                vector<int> slice;
-                for (size_t i = parent_from; i < parent_to; i++) {
-                    slice.push_back(parent->atoms[i].type);
-                }
-                slices.insert(slice);
-            }
-        }
+        slices.merge(get_changed_slices_of_event(current, parent, dels_only_in_dups));
     }
 
     return slices;
 }
 
-vector<int> get_inverse_slice(vector<int> slice) {
+vector<int> get_inverse_slice(vector<int>& slice) {
     vector<int> inverse(slice.size());
     for (size_t i = 0; i < inverse.size(); i++) {
         inverse[i] = -slice[slice.size() - i - 1];
@@ -456,11 +463,9 @@ vector<int> get_inverse_slice(vector<int> slice) {
     return inverse;
 }
 
-double calculate_jaccard_index(set<vector<int>> A, set<vector<int>> B) {
-    set<vector<int>> intersection_set;
+set<vector<int>> slices_union(set<vector<int>>& A, set<vector<int>>& B) {
     set<vector<int>> union_set;
 
-    // union
     for (auto slice : A) {
         auto inverse = get_inverse_slice(slice);
         if (union_set.find(slice) == union_set.end() && union_set.find(inverse) == union_set.end()) {
@@ -474,7 +479,12 @@ double calculate_jaccard_index(set<vector<int>> A, set<vector<int>> B) {
         }
     }
 
-    // intersection
+    return union_set;
+}
+
+set<vector<int>> slices_intersection(set<vector<int>>& A, set<vector<int>>& B) {
+    set<vector<int>> intersection_set;
+
     for (auto slice : A) {
         auto inverse = get_inverse_slice(slice);
         if ((intersection_set.find(slice) == intersection_set.end() && intersection_set.find(inverse) == intersection_set.end()) &&
@@ -482,6 +492,13 @@ double calculate_jaccard_index(set<vector<int>> A, set<vector<int>> B) {
             intersection_set.insert(slice);
         }
     }
+
+    return intersection_set;
+}
+
+double calculate_jaccard_index(set<vector<int>> A, set<vector<int>> B) {
+    set<vector<int>> union_set = slices_union(A, B);
+    set<vector<int>> intersection_set = slices_intersection(A, B);
 
     if (union_set.size() == 0) {
         return 1;

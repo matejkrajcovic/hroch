@@ -155,3 +155,11 @@ void HEvent::write_detailed(ostream& os) {
     }
     os << endl;
 }
+
+void HEvent::clear_parent() {
+    if (parent) {
+        delete parent;
+        parent = nullptr;
+        atom_parents.clear();
+    }
+}

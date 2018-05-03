@@ -385,6 +385,7 @@ void reconstruct(string atoms_file, string trees_dir, int count, int strategy) {
                 if (schedule->accept_new(score) || !h) {
                     h = h_current;
                     cout << "   accepted" << endl;
+                    machine->reset_used_duplications();
                 } else {
                     cout << endl;
                     delete h_current;
@@ -393,7 +394,6 @@ void reconstruct(string atoms_file, string trees_dir, int count, int strategy) {
 
             cout << endl;
             delete schedule;
-            machine->reset_used_duplications();
             if (!h) {
                 continue;
             }
